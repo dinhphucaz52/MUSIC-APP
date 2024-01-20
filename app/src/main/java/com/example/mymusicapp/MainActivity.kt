@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         )
         songRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
         val songAdapter = SongAdapter(songList) { tmp ->
-f mnn                                                                  position = tmp
+            position = tmp
             song = songList[position]
             playBtn.setBackgroundResource(R.drawable.ic_pause_button)
             val intent = Intent(this, MusicService::class.java)
