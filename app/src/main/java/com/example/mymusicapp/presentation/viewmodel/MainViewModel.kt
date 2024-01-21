@@ -48,7 +48,6 @@ class MainViewModel : ViewModel() {
     private lateinit var controller: MediaController
 
     fun setController(controller: MediaController) {
-        println("MainViewModel : controller is connected")
         this.controller = controller
     }
 

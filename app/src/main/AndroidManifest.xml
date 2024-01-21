@@ -7,8 +7,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
-
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +19,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMusicApp">
         <activity
+            android:name=".presentation.activity.CalendarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.activity.UploadActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.activity.GalleryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.activity.UserActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.activity.SongActivity"
             android:exported="false" />
         <activity
@@ -27,17 +38,16 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
         <service
             android:name=".data.service.MusicService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback">
-
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService" />
                 <action android:name="android.media.browse.MediaBrowserService" />

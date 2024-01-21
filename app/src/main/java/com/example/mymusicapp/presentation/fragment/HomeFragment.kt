@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.fragment.app.Fragment
-import androidx.media3.session.MediaController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mymusicapp.databinding.FragmentHomeBinding
 import com.example.mymusicapp.presentation.activity.SongActivity
@@ -33,7 +32,6 @@ class HomeFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        println("HomeFragment: onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         prepareRecyclerViews()
         dataBinding()
@@ -82,6 +80,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun prepareRecyclerViews() {
+        songAdapter.setContext(requireContext())
         binding.songRecyclerView.apply {
             layoutManager =
                 LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)

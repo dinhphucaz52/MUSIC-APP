@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Music App">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-05-04T08:24:09.765010100Z">
+        <DropdownSelection timestamp="2024-05-11T12:49:42.517851500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Default" identifier="serial=192.168.1.206:5555;connection=dbc72727" />
+              <DeviceId pluginId="Default" identifier="serial=192.168.1.206:5555;connection=c61f8301" />
             </handle>
           </Target>
         </DropdownSelection>

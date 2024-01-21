@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_color">#2e333a</color>
+    <color name="primary_color">#e0f6ec</color>
     <color name="secondary_color">#F4BFD3</color>
 
     <color name="yellow">#f7e700</color>
@@ -8,10 +8,10 @@
     <color name="white">#ffffff</color>
     <color name="black">#010101</color>
 
-    <color name="text_primary_color">#FFFFFFFF</color>
+    <color name="text_primary_color">#2f604b</color>
 
-    <color name="icon_color">#909295</color>
+    <color name="icon_color">#2f604b</color>
 
-    <color name="unselected_color">#909295</color>
-    <color name="selected_color">#FFFFFF</color>
+    <color name="unselected_color">#2f604b</color>
+    <color name="selected_color">#e0f6ec</color>
 </resources>

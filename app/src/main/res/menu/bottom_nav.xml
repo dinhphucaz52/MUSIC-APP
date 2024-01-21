@@ -8,8 +8,4 @@
         android:id="@+id/searchFragment"
         android:icon="@drawable/music_list"
         android:title="@string/search" />
-    <item
-        android:id="@+id/userFragment"
-        android:icon="@drawable/person"
-        android:title="@string/search" />
 </menu>

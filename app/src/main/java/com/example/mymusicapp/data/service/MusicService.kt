@@ -34,8 +34,8 @@ class MusicService : MediaLibraryService() {
         super.onCreate()
 
         player = ExoPlayer.Builder(this).build()
-        player.playWhenReady = true
         player.apply {
+            playWhenReady = true
             repeatMode = ExoPlayer.REPEAT_MODE_ALL
         }
 

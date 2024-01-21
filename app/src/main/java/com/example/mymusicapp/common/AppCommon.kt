@@ -1,6 +1,7 @@
 package com.example.mymusicapp.common
 
 object AppCommon {
+    const val TIME_ZONE: Double = 7.0
     const val REQUEST_CODE_PERMISSION = 0
     const val CHANNEL_ID = "MUSIC CHANNEL"
     const val REQUEST_CODE = "REQUEST_CODE"

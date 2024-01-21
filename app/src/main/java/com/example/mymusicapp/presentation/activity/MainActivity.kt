@@ -1,10 +1,12 @@
 package com.example.mymusicapp.presentation.activity
 
 import android.Manifest
+import android.R.attr.timeZone
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.icu.util.TimeZone
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -23,9 +25,11 @@ import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.repository.MainRepository
 import com.example.mymusicapp.data.service.MusicService
 import com.example.mymusicapp.databinding.ActivityMainBinding
+import com.example.mymusicapp.helper.LunarDayHelper
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+
 
 @UnstableApi
 class MainActivity : AppCompatActivity() {
@@ -40,6 +44,7 @@ class MainActivity : AppCompatActivity() {
     private var myMusicService: MusicService? = null
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            println("Service is connected")
             val binder = service as MusicService.MyBinder
             myMusicService = binder.getService()
             isBound = true
@@ -71,7 +76,24 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         init()
         startMusicService()
+        setEvents()
     }
+
+    private fun setEvents() {
+        binding.apply {
+            userButton.setOnClickListener {
+                startActivity(Intent(this@MainActivity, UserActivity::class.java))
+            }
+
+            appName.setOnClickListener {
+                startActivity(Intent(this@MainActivity, UploadActivity::class.java))
+            }
+            imageView.setOnClickListener {
+//                println(LunarDayHelper.convertSolar2Lunar(13, 5, 2024, AppCommon.TIME_ZONE).toList())
+            }
+        }
+    }
+
 
     private fun init() {
         requestPermission()
