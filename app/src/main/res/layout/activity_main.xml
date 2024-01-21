@@ -10,12 +10,11 @@
     tools:context=".MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
+        tools:listitem="@layout/item_music"
         android:id="@+id/songRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7">
-
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_weight="7" />
 
     <LinearLayout
         android:layout_marginTop="30dp"
