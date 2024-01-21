@@ -12,6 +12,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
@@ -24,33 +27,39 @@ class MusicService : Service() {
         NotificationManagerCompat.from(this@MusicService)
     }
     private val binder = MyBinder()
+
+
     override fun onBind(intent: Intent): IBinder {
         return binder
     }
+
     inner class MyBinder : Binder() {
         fun getService(): MusicService {
             return this@MusicService
         }
     }
+
     override fun onCreate() {
         song = SongClass("NO SONG FOUND", R.raw.nuoc_mat_chia_doi)
         mediaPlayer = MediaPlayer.create(this@MusicService, song.music)
         createNotificationChannel()
         super.onCreate()
     }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         song = intent?.getParcelableExtra("song")!!
-
         CoroutineScope(Dispatchers.IO).launch {
             mediaPlayer.stop()
             mediaPlayer.release()
             mediaPlayer = MediaPlayer.create(this@MusicService, song.music)
             mediaPlayer.start()
-            val notification = createNotification(song)
-            startForeground(1, notification)
+            mediaPlayer.isLooping = true
         }
+        val notification = createNotification(song)
+        startForeground(1, notification)
         return START_NOT_STICKY
     }
+
     private fun createNotificationChannel() {
         val notificationChannel = NotificationChannelCompat.Builder(
             myChannel,
@@ -61,6 +70,7 @@ class MusicService : Service() {
             .build()
         notificationManagerCompat.createNotificationChannel(notificationChannel)
     }
+
     private fun createNotification(song: SongClass? = null): Notification {
         val notificationBuilder = NotificationCompat.Builder(this@MusicService, myChannel)
             .apply {
@@ -77,6 +87,7 @@ class MusicService : Service() {
             }
         return notificationBuilder.build()
     }
+
     fun playSong(): Boolean {
         if (mediaPlayer.isPlaying) {
             mediaPlayer.pause()
@@ -85,23 +96,34 @@ class MusicService : Service() {
         }
         return mediaPlayer.isPlaying
     }
+
     fun getMediaPlayerStatus(): Boolean {
         return mediaPlayer.isPlaying
     }
+
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer.stop()
-        mediaPlayer.release()
+        CoroutineScope(Dispatchers.IO).launch {
+            while (isActive) {
+                mediaPlayer.stop()
+                mediaPlayer.release()
+                cancel()
+            }
+        }
     }
+
     fun getDuration(): Int {
         return mediaPlayer.duration
     }
+
     fun getCurrentPosition(): Int {
         return mediaPlayer.currentPosition
     }
+
     fun mediaPlayerSeekTo(currentPosition: Int) {
         mediaPlayer.seekTo(currentPosition)
     }
+
     private fun durationToString(): String {
         val tmp = mediaPlayer.duration / 1000
         return "${tmp.div(60)}:${tmp.mod(60)}"

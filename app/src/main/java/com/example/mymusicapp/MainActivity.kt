@@ -114,10 +114,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-
-
-
-
     }
     fun mappingView() {
         songRecyclerView = findViewById(R.id.songRecyclerView)
