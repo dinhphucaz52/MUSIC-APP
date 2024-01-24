@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class SongAdapter(
-    private val songList: List<SongClass>,
+    private val songList: List<AudioClass>,
     private val listener: (position: Int) -> Unit
 ) : RecyclerView.Adapter<SongAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
@@ -38,7 +38,6 @@ class SongAdapter(
     override fun getItemCount(): Int {
         return songList.size
     }
-
 
 }
 

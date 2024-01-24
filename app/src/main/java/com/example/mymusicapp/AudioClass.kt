@@ -1,11 +1,9 @@
 package com.example.mymusicapp
 
-import android.media.MediaPlayer
 import android.os.Parcel
 import android.os.Parcelable
-import java.time.Duration
 
-class SongClass(
+class AudioClass(
     val title: String?,
     val music: Int,
 ) : Parcelable {
@@ -23,12 +21,12 @@ class SongClass(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<SongClass> {
-        override fun createFromParcel(parcel: Parcel): SongClass {
-            return SongClass(parcel)
+    companion object CREATOR : Parcelable.Creator<AudioClass> {
+        override fun createFromParcel(parcel: Parcel): AudioClass {
+            return AudioClass(parcel)
         }
 
-        override fun newArray(size: Int): Array<SongClass?> {
+        override fun newArray(size: Int): Array<AudioClass?> {
             return arrayOfNulls(size)
         }
     }

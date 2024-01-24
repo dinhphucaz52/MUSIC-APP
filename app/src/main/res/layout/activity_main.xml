@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:padding="10dp"
     android:id="@+id/songView"
+    android:weightSum="10"
     tools:context=".MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -22,7 +23,11 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:orientation="vertical">
-
+        <TextView
+            android:id="@+id/nameSongTextView"
+            android:textSize="26sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
@@ -31,13 +36,12 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/previousBtn"
+                android:id="@+id/prevBtn"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:background="@drawable/ic_previous_button" />
