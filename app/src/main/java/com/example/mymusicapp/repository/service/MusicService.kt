@@ -1,19 +1,22 @@
-package com.example.mymusicapp
+package com.example.mymusicapp.repository.service
 
-//noinspection SuspiciousImport
-import android.R
+import android.Manifest
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.example.mymusicapp.R
+import com.example.mymusicapp.repository.myclass.AudioClass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,10 +24,10 @@ import kotlinx.coroutines.launch
 
 @Suppress("DEPRECATION")
 class MusicService : Service() {
-    lateinit var callback: ResultCallback
     private var position: Int = INVALID_VALUE
     private var mediaPlayer: MediaPlayer? = null
     private var audioList: ArrayList<AudioClass> = arrayListOf()
+
     private val notificationManagerCompat: NotificationManagerCompat by lazy {
         NotificationManagerCompat.from(this@MusicService)
     }
@@ -44,6 +47,21 @@ class MusicService : Service() {
         const val INVALID_VALUE = -1
     }
 
+    override fun onCreate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val channel = NotificationChannelCompat.Builder(
+                CHANNEL_ID,
+                NotificationManagerCompat.IMPORTANCE_MAX
+            )
+                .setName("Music")
+                .setDescription("Play music")
+                .build()
+            notificationManagerCompat.createNotificationChannel(channel)
+        }
+        super.onCreate()
+    }
+
+
     override fun onBind(intent: Intent): IBinder {
         println("onBind")
         if (intent.hasExtra("audioList")) {
@@ -60,23 +78,7 @@ class MusicService : Service() {
         }
     }
 
-    override fun onCreate() {
-        println("onCreate")
-        CoroutineScope(Dispatchers.IO).launch {
-            val channel = NotificationChannelCompat.Builder(
-                CHANNEL_ID,
-                NotificationManagerCompat.IMPORTANCE_DEFAULT
-            )
-                .setName("Music")
-                .setDescription("Play music")
-                .build()
-            notificationManagerCompat.createNotificationChannel(channel)
-        }
-        super.onCreate()
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        println("onStartCommand")
         if (intent != null) {
             if (intent.hasExtra("position")) {
                 position = intent.getIntExtra("position", INVALID_VALUE)
@@ -90,15 +92,52 @@ class MusicService : Service() {
                 }
             }
         }
-        startForeground(NOTIFICATION_ID, notification())
+        startForeground(NOTIFICATION_ID, createNotification())
         return START_NOT_STICKY
+    }
+
+    private fun createNotification(): Notification {
+        return NotificationCompat.Builder(this@MusicService, CHANNEL_ID)
+            .apply {
+                setContentTitle(if (position != INVALID_VALUE) audioList[position].title else "NO SONG FOUND")
+                setContentText(durationToString())
+                setOnlyAlertOnce(true)
+                setShowWhen(false)
+                setSmallIcon(R.drawable.ic_launcher_background, 1)
+                setLargeIcon(
+                    BitmapFactory.decodeResource(
+                        resources,
+                        R.drawable.ic_launcher_background
+                    )
+                )
+                addAction(
+                    R.drawable.ic_previous_button,
+                    "prev",
+                    createPendingIntent(REQUEST_CODE_PREV)
+                )
+                addAction(
+                    R.drawable.ic_play_button,
+                    "play",
+                    createPendingIntent(REQUEST_CODE_PLAY)
+                )
+                addAction(
+                    R.drawable.ic_next_button,
+                    "next",
+                    createPendingIntent(REQUEST_CODE_NEXT)
+                )
+                setStyle(
+                    androidx.media.app.NotificationCompat.MediaStyle()
+                        .setShowActionsInCompactView(0, 1, 2)
+                        .setMediaSession(mediaSessionCompat.sessionToken)
+                        .setShowCancelButton(true)
+                )
+            }.build()
     }
 
     private fun startSong() {
         mediaPlayer?.stop()
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer.create(this@MusicService, audioList[position].music)
-        callback.onResultReceived(getDuration())
         mediaPlayer?.start()
         mediaPlayer?.setOnCompletionListener {
             playNextSong()
@@ -144,40 +183,6 @@ class MusicService : Service() {
             PendingIntent.FLAG_MUTABLE
         )
     }
-
-    private fun notification(): Notification {
-        return NotificationCompat.Builder(this@MusicService, CHANNEL_ID)
-            .apply {
-                setContentTitle(if (position != INVALID_VALUE) audioList[position].title else "NO SONG FOUND")
-                setContentText(durationToString())
-                setSmallIcon(R.drawable.picture_frame)
-                setOnlyAlertOnce(true)
-                setShowWhen(false)
-                setSmallIcon(R.drawable.picture_frame, 1)
-                setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.editbox_background))
-                addAction(
-                    R.drawable.ic_media_previous,
-                    "prev",
-                    createPendingIntent(REQUEST_CODE_PREV)
-                )
-                addAction(
-                    R.drawable.ic_media_play,
-                    "play",
-                    createPendingIntent(REQUEST_CODE_PLAY)
-                )
-                addAction(
-                    R.drawable.ic_media_next,
-                    "next",
-                    createPendingIntent(REQUEST_CODE_NEXT)
-                )
-                setStyle(
-                    androidx.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(0, 1, 2)
-                        .setMediaSession(mediaSessionCompat.sessionToken)
-                )
-            }.build()
-    }
-
 
     private fun getDuration(): Int {
         return mediaPlayer?.duration ?: INVALID_VALUE

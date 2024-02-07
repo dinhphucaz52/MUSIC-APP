@@ -1,4 +1,4 @@
-package com.example.mymusicapp
+package com.example.mymusicapp.repository.myclass
 
 import android.os.Parcel
 import android.os.Parcelable

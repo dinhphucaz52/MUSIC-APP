@@ -1,10 +1,12 @@
-package com.example.mymusicapp
+package com.example.mymusicapp.repository.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mymusicapp.repository.myclass.AudioClass
+import com.example.mymusicapp.R
 
 class SongAdapter(
     private val songList: List<AudioClass>,
@@ -24,13 +26,13 @@ class SongAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_music, parent, false)
         return ViewHolder(itemView)
     }
 
-    override fun onBindViewHolder(holder: SongAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val song = songList[position]
         holder.musicNameTxtView.text = song.title
     }

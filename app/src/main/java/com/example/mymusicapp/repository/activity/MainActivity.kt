@@ -1,4 +1,4 @@
-package com.example.mymusicapp
+package com.example.mymusicapp.repository.activity
 
 import android.Manifest
 import android.content.ComponentName
@@ -10,12 +10,18 @@ import android.os.Bundle
 import android.os.IBinder
 import android.widget.Button
 import android.widget.SeekBar
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mymusicapp.repository.myclass.AudioClass
+import com.example.mymusicapp.repository.service.MusicService
+import com.example.mymusicapp.R
+import com.example.mymusicapp.repository.adapter.SongAdapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(), ResultCallback {
+class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val REQUEST_CODE_PERMISSION_POST_NOTIFICATIONS = 0
@@ -43,19 +49,18 @@ class MainActivity : AppCompatActivity(), ResultCallback {
         }
     }
 
-    override fun onResultReceived(resultData: Int) {
-        seekBar.max = resultData
-        println(resultData.toString())
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         println("main: onCreate")
         setContentView(R.layout.activity_main)
+
         requestPermission()
         mappingView()
         addSong()
-        startMusicService()
+        CoroutineScope(Dispatchers.IO).launch {
+            startMusicService()
+        }
+
         songRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
         val songAdapter = SongAdapter(audioList) { position ->
             intent = Intent(this@MainActivity, MusicService::class.java)
@@ -63,23 +68,18 @@ class MainActivity : AppCompatActivity(), ResultCallback {
             startService(intent)
             playBtn.setBackgroundResource(R.drawable.ic_pause_button)
         }
-
         songRecyclerView.adapter = songAdapter
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                myMusicService?.mediaPlayerSeekTo(progress)
-            }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
+        eventControlAudio()
 
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
 
-        })
+    }
+
+    private fun eventControlAudio() {
         prevBtn.setOnClickListener {
             myMusicService?.playPrevSong()
         }
+
         playBtn.setOnClickListener {
             if (myMusicService?.getIsPlaying() == true) {
                 playBtn.setBackgroundResource(R.drawable.ic_play_button)
@@ -88,6 +88,7 @@ class MainActivity : AppCompatActivity(), ResultCallback {
             }
             myMusicService?.playSong()
         }
+
         nextBtn.setOnClickListener {
             myMusicService?.playNextSong()
         }
@@ -127,7 +128,8 @@ class MainActivity : AppCompatActivity(), ResultCallback {
             this@MainActivity,
             arrayOf(
                 Manifest.permission.POST_NOTIFICATIONS,
-                Manifest.permission.FOREGROUND_SERVICE
+                Manifest.permission.FOREGROUND_SERVICE,
+                Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
             ),
             REQUEST_CODE_PERMISSION_POST_NOTIFICATIONS
         )
