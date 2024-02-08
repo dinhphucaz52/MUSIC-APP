@@ -1,22 +1,19 @@
 package com.example.mymusicapp.repository.service
 
-import android.Manifest
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
 import android.os.Binder
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.mymusicapp.R
-import com.example.mymusicapp.repository.myclass.AudioClass
+import com.example.mymusicapp.data.model.SongClass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +23,7 @@ import kotlinx.coroutines.launch
 class MusicService : Service() {
     private var position: Int = INVALID_VALUE
     private var mediaPlayer: MediaPlayer? = null
-    private var audioList: ArrayList<AudioClass> = arrayListOf()
+    private var audioList: ArrayList<SongClass> = arrayListOf()
 
     private val notificationManagerCompat: NotificationManagerCompat by lazy {
         NotificationManagerCompat.from(this@MusicService)
@@ -65,7 +62,7 @@ class MusicService : Service() {
     override fun onBind(intent: Intent): IBinder {
         println("onBind")
         if (intent.hasExtra("audioList")) {
-            val receivedObjectList: ArrayList<AudioClass> =
+            val receivedObjectList: ArrayList<SongClass> =
                 intent.getParcelableArrayListExtra("audioList")!!
             audioList = receivedObjectList
         }
@@ -111,17 +108,17 @@ class MusicService : Service() {
                     )
                 )
                 addAction(
-                    R.drawable.ic_previous_button,
+                    R.drawable.notification_ic_prev,
                     "prev",
                     createPendingIntent(REQUEST_CODE_PREV)
                 )
                 addAction(
-                    R.drawable.ic_play_button,
+                    R.drawable.notification_ic_play,
                     "play",
                     createPendingIntent(REQUEST_CODE_PLAY)
                 )
                 addAction(
-                    R.drawable.ic_next_button,
+                    R.drawable.notification_ic_next,
                     "next",
                     createPendingIntent(REQUEST_CODE_NEXT)
                 )

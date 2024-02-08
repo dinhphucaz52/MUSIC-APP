@@ -2,7 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="backgroundApp">#009688</color>
-    <color name="green">#009688</color>
-    <color name="controlButton">#FFFFFFFF</color>
+
+    <color name="main_background">#2d99ae</color>
+
+    <color name="song_item_color">#0d5777</color>
+    <color name="song_item_text_color">#f8dad0</color>
+
+    <color name="bottom_nav_false">#b7e6e9</color>
+    <color name="bottom_nav_true">#fbc192</color>
 </resources>

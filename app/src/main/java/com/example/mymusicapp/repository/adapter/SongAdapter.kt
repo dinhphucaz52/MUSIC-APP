@@ -5,11 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mymusicapp.repository.myclass.AudioClass
+import com.example.mymusicapp.data.model.SongClass
 import com.example.mymusicapp.R
 
 class SongAdapter(
-    private val songList: List<AudioClass>,
+    private val songList: List<SongClass>,
     private val listener: (position: Int) -> Unit
 ) : RecyclerView.Adapter<SongAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),

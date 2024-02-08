@@ -1,9 +1,9 @@
-package com.example.mymusicapp.repository.myclass
+package com.example.mymusicapp.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
 
-class AudioClass(
+class SongClass(
     val title: String?,
     val music: Int,
 ) : Parcelable {
@@ -21,12 +21,12 @@ class AudioClass(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<AudioClass> {
-        override fun createFromParcel(parcel: Parcel): AudioClass {
-            return AudioClass(parcel)
+    companion object CREATOR : Parcelable.Creator<SongClass> {
+        override fun createFromParcel(parcel: Parcel): SongClass {
+            return SongClass(parcel)
         }
 
-        override fun newArray(size: Int): Array<AudioClass?> {
+        override fun newArray(size: Int): Array<SongClass?> {
             return arrayOfNulls(size)
         }
     }

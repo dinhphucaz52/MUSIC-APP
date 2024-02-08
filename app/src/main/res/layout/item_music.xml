@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
-    android:background="@drawable/custom_seekbar_thumb"
+    android:background="@drawable/item_background"
     android:orientation="horizontal"
     android:padding="5dp">
 
@@ -11,7 +11,8 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_margin="2dp"
-        android:background="@drawable/ic_song" />
+        android:importantForAccessibility="no"
+        android:src="@drawable/item_ic_song" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,8 +25,8 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:gravity="center_vertical"
-            android:text="Song Name"
-            android:textColor="@color/black"
+            android:text="@string/song_name"
+            android:textColor="@color/song_item_text_color"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -34,8 +35,8 @@
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:gravity="center_vertical"
-            android:text="Duration"
-            android:textColor="@color/black"
+            android:text="@string/duration"
+            android:textColor="@color/song_item_text_color"
             android:textSize="16sp"
             android:textStyle="bold" />
 

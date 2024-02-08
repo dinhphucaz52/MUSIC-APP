@@ -1,126 +1,41 @@
 package com.example.mymusicapp.repository.activity
 
 import android.Manifest
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.IBinder
-import android.widget.Button
-import android.widget.SeekBar
+import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.mymusicapp.repository.myclass.AudioClass
-import com.example.mymusicapp.repository.service.MusicService
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.example.mymusicapp.R
-import com.example.mymusicapp.repository.adapter.SongAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.mymusicapp.repository.fragment.HomeFragment
+
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        private const val REQUEST_CODE_PERMISSION_POST_NOTIFICATIONS = 0
+        private const val REQUEST_CODE_PERMISSION = 0
     }
 
-    private var audioList: ArrayList<AudioClass> = arrayListOf()
 
-    private lateinit var playBtn: Button
-    private lateinit var nextBtn: Button
-    private lateinit var seekBar: SeekBar
-    private lateinit var prevBtn: Button
-    private lateinit var songRecyclerView: RecyclerView
+    private lateinit var mainView: FrameLayout
 
-    private var isBound = false
-    private var myMusicService: MusicService? = null
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as MusicService.MyBinder
-            myMusicService = binder.getService()
-            isBound = true
-        }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-        }
-    }
+    private var fragmentManager: FragmentManager = supportFragmentManager
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("main: onCreate")
         setContentView(R.layout.activity_main)
 
         requestPermission()
         mappingView()
-        addSong()
-        CoroutineScope(Dispatchers.IO).launch {
-            startMusicService()
-        }
-
-        songRecyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
-        val songAdapter = SongAdapter(audioList) { position ->
-            intent = Intent(this@MainActivity, MusicService::class.java)
-            intent.putExtra("position", position)
-            startService(intent)
-            playBtn.setBackgroundResource(R.drawable.ic_pause_button)
-        }
-        songRecyclerView.adapter = songAdapter
-
-        eventControlAudio()
 
 
-    }
-
-    private fun eventControlAudio() {
-        prevBtn.setOnClickListener {
-            myMusicService?.playPrevSong()
-        }
-
-        playBtn.setOnClickListener {
-            if (myMusicService?.getIsPlaying() == true) {
-                playBtn.setBackgroundResource(R.drawable.ic_play_button)
-            } else {
-                playBtn.setBackgroundResource(R.drawable.ic_pause_button)
-            }
-            myMusicService?.playSong()
-        }
-
-        nextBtn.setOnClickListener {
-            myMusicService?.playNextSong()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-    }
-
-    private fun startMusicService() {
-        val musicServiceIntent = Intent(this, MusicService::class.java)
-        musicServiceIntent.putParcelableArrayListExtra("audioList", audioList)
-        bindService(musicServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-        intent = Intent(this@MainActivity, MusicService::class.java)
-        intent.putExtra("position", MusicService.INVALID_VALUE)
-        startService(intent)
-    }
-
-    private fun addSong() {
-        audioList.add(AudioClass("Nếu ta ngược lối", R.raw.neu_ta_nguoc_loi))
-        audioList.add(AudioClass("Không lấy được vợ", R.raw.khong_lay_duoc_vo))
-        audioList.add(AudioClass("Nước mắt chia đôi", R.raw.nuoc_mat_chia_doi))
-        audioList.add(AudioClass("Thôi ngừng nhớ em", R.raw.thoi_ngung_nho_em))
-        audioList.add(AudioClass("Xoá hết yêu thương", R.raw.xoa_het_yeu_thuong))
-        audioList.add(AudioClass("Yêu em là định mệnh", R.raw.yeu_em_la_dinh_menh))
-        audioList.add(AudioClass("Anh không biết bao lâu", R.raw.anh_khong_biet_bao_lau))
-        audioList.add(AudioClass("Người ấy sẽ quên em thôi", R.raw.nguoi_ay_se_quen_em_thoi))
-        audioList.add(AudioClass("Anh quên mình đã chia tay", R.raw.anh_quen_minh_da_chia_tay))
-        audioList.sortBy {
-            it.title
-        }
+        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+        val homeFragment = HomeFragment()
+        fragmentTransaction.replace(R.id.mainView, homeFragment)
+        fragmentTransaction.commit()
     }
 
     private fun requestPermission() {
@@ -131,15 +46,11 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.FOREGROUND_SERVICE,
                 Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
             ),
-            REQUEST_CODE_PERMISSION_POST_NOTIFICATIONS
+            REQUEST_CODE_PERMISSION
         )
     }
 
     private fun mappingView() {
-        songRecyclerView = findViewById(R.id.songRecyclerView)
-        prevBtn = findViewById(R.id.prevBtn)
-        playBtn = findViewById(R.id.playBtn)
-        nextBtn = findViewById(R.id.nextBtn)
-        seekBar = findViewById(R.id.seekBar)
+        mainView = findViewById(R.id.mainView)
     }
 }
