@@ -11,26 +11,72 @@
     android:weightSum="10"
     tools:context=".repository.activity.MainActivity">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/utm_bebas"
+        android:gravity="center_horizontal"
+        android:text="@string/app_name"
+        android:textColor="@color/main_text_color"
+        android:textSize="40sp" />
+
     <FrameLayout
         android:id="@+id/mainView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7"
+        android:layout_marginTop="10dp"
+        android:layout_weight="9"
         android:background="@color/song_item_text_color" />
 
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/test"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/main_activity_ic_song_list" />
+
+        <TextView
+            android:id="@+id/nameSongMainView"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="@string/no_song_found"
+            android:textColor="@color/main_text_color"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            tools:ignore="NestedWeights" />
+
+        <ImageView
+            android:id="@+id/mainNextSongBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/song_layout_ic_next" />
+
+    </LinearLayout>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
+        android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:animateLayoutChanges="true"
         android:background="@color/main_background"
         android:padding="3dp"
-        app:elevation="0dp"
         app:itemIconTint="@color/bottom_nav_selector"
-        app:itemRippleColor="#5e92f3"
         app:itemTextColor="@color/bottom_nav_selector"
-        app:labelVisibilityMode="labeled"
         app:menu="@menu/bottom_nav" />
 
 

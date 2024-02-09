@@ -1,5 +1,6 @@
 package com.example.mymusicapp.repository.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,7 @@ import com.example.mymusicapp.data.model.SongClass
 import com.example.mymusicapp.R
 
 class SongAdapter(
-    private val songList: List<SongClass>,
+    private var songList: List<SongClass>,
     private val listener: (position: Int) -> Unit
 ) : RecyclerView.Adapter<SongAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
@@ -39,6 +40,14 @@ class SongAdapter(
 
     override fun getItemCount(): Int {
         return songList.size
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(songList: ArrayList<SongClass>?) {
+        if (songList != null) {
+            this.songList = songList
+        };
+        notifyDataSetChanged()
     }
 
 }

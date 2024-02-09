@@ -1,4 +1,4 @@
-package com.example.mymusicapp.repository.service
+package com.example.mymusicapp.data.service
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -19,11 +19,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-@Suppress("DEPRECATION")
 class MusicService : Service() {
     private var position: Int = INVALID_VALUE
     private var mediaPlayer: MediaPlayer? = null
-    private var audioList: ArrayList<SongClass> = arrayListOf()
+    private var songList = ArrayList<SongClass>()
 
     private val notificationManagerCompat: NotificationManagerCompat by lazy {
         NotificationManagerCompat.from(this@MusicService)
@@ -45,6 +44,7 @@ class MusicService : Service() {
     }
 
     override fun onCreate() {
+        println("service: onCreate")
         CoroutineScope(Dispatchers.IO).launch {
             val channel = NotificationChannelCompat.Builder(
                 CHANNEL_ID,
@@ -60,12 +60,7 @@ class MusicService : Service() {
 
 
     override fun onBind(intent: Intent): IBinder {
-        println("onBind")
-        if (intent.hasExtra("audioList")) {
-            val receivedObjectList: ArrayList<SongClass> =
-                intent.getParcelableArrayListExtra("audioList")!!
-            audioList = receivedObjectList
-        }
+        println("service: onBind")
         return binder
     }
 
@@ -76,6 +71,7 @@ class MusicService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        println("service: onStartCommand")
         if (intent != null) {
             if (intent.hasExtra("position")) {
                 position = intent.getIntExtra("position", INVALID_VALUE)
@@ -83,7 +79,7 @@ class MusicService : Service() {
                     startSong()
             } else {
                 when (intent.getIntExtra(REQUEST_CODE, INVALID_VALUE)) {
-                    REQUEST_CODE_PLAY -> playSong()
+                    REQUEST_CODE_PLAY -> playSong(position)
                     REQUEST_CODE_NEXT -> playNextSong()
                     REQUEST_CODE_PREV -> playPrevSong()
                 }
@@ -96,7 +92,7 @@ class MusicService : Service() {
     private fun createNotification(): Notification {
         return NotificationCompat.Builder(this@MusicService, CHANNEL_ID)
             .apply {
-                setContentTitle(if (position != INVALID_VALUE) audioList[position].title else "NO SONG FOUND")
+                setContentTitle(if (position != INVALID_VALUE) songList[position].title else "NO SONG FOUND")
                 setContentText(durationToString())
                 setOnlyAlertOnce(true)
                 setShowWhen(false)
@@ -134,7 +130,7 @@ class MusicService : Service() {
     private fun startSong() {
         mediaPlayer?.stop()
         mediaPlayer?.release()
-        mediaPlayer = MediaPlayer.create(this@MusicService, audioList[position].music)
+        mediaPlayer = MediaPlayer.create(this@MusicService, songList[position].music)
         mediaPlayer?.start()
         mediaPlayer?.setOnCompletionListener {
             playNextSong()
@@ -144,7 +140,7 @@ class MusicService : Service() {
     fun playPrevSong() {
         if (position >= 0) {
             if (position == 0) {
-                position = audioList.size
+                position = songList.size
             }
             position--
             startSong()
@@ -154,18 +150,23 @@ class MusicService : Service() {
     fun playNextSong() {
         if (position >= 0) {
             position++
-            if (position == audioList.size) {
+            if (position == songList.size) {
                 position = 0
             }
             startSong()
         }
     }
 
-    fun playSong() {
-        if (mediaPlayer?.isPlaying == true) {
-            mediaPlayer?.pause()
+    fun playSong(position: Int) {
+        if (this.position == position) {
+            if (mediaPlayer?.isPlaying == true) {
+                mediaPlayer?.pause()
+            } else {
+                mediaPlayer?.start()
+            }
         } else {
-            mediaPlayer?.start()
+            this.position = position
+            startSong()
         }
     }
 
@@ -181,22 +182,6 @@ class MusicService : Service() {
         )
     }
 
-    private fun getDuration(): Int {
-        return mediaPlayer?.duration ?: INVALID_VALUE
-    }
-
-    fun getCurrentPosition(): Int {
-        return mediaPlayer?.currentPosition ?: INVALID_VALUE
-    }
-
-    fun getIsPlaying(): Boolean {
-        return mediaPlayer?.isPlaying == true
-    }
-
-    fun mediaPlayerSeekTo(currentPosition: Int) {
-        mediaPlayer?.seekTo(currentPosition)
-    }
-
     private fun durationToString(): String {
         val tmp = mediaPlayer?.duration?.div(1000)
         if (tmp != null) {
@@ -204,4 +189,13 @@ class MusicService : Service() {
         }
         return "NULL"
     }
+
+    fun updateData(songList: ArrayList<SongClass>) {
+        this.songList = songList
+    }
+
+    fun getSongList(): ArrayList<SongClass> {
+        return songList
+    }
+
 }

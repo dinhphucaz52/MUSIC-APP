@@ -3,11 +3,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="main_background">#2d99ae</color>
+    <color name="main_background">#1e1e2a</color>
+    <color name="main_text_color">#FFFFFFFF</color>
 
-    <color name="song_item_color">#0d5777</color>
-    <color name="song_item_text_color">#f8dad0</color>
+    <color name="song_item_color">#2b2b38</color>
+    <color name="song_item_text_color">#FFFFFF</color>
 
     <color name="bottom_nav_false">#b7e6e9</color>
     <color name="bottom_nav_true">#fbc192</color>
+
+    <color name="main_activity_ic_song_list_color">#caa37a</color>
+    <color name="main_activity_ic_next_color">#caa37a</color>
 </resources>
