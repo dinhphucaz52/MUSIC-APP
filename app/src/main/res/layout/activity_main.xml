@@ -44,7 +44,7 @@
             android:src="@drawable/main_activity_ic_song_list" />
 
         <TextView
-            android:id="@+id/nameSongMainView"
+            android:id="@+id/mainNameSong"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

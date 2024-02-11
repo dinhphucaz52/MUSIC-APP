@@ -7,6 +7,7 @@
     <color name="main_text_color">#FFFFFFFF</color>
 
     <color name="song_item_color">#2b2b38</color>
+    <color name="song_item_color_clicked">#39dbac</color>
     <color name="song_item_text_color">#FFFFFF</color>
 
     <color name="bottom_nav_false">#b7e6e9</color>

@@ -12,14 +12,17 @@ import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.MutableLiveData
 import com.example.mymusicapp.R
 import com.example.mymusicapp.data.model.SongClass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 class MusicService : Service() {
+
+    private var positionLiveData = MutableLiveData(INVALID_VALUE)
+
     private var position: Int = INVALID_VALUE
     private var mediaPlayer: MediaPlayer? = null
     private var songList = ArrayList<SongClass>()
@@ -40,6 +43,7 @@ class MusicService : Service() {
         private const val REQUEST_CODE_NEXT: Int = 2
         private const val REQUEST_CODE_PREV: Int = 3
         private const val REQUEST_CODE_PLAY: Int = 4
+        private const val REQUEST_CODE_PAUSE: Int = 5
         const val INVALID_VALUE = -1
     }
 
@@ -73,26 +77,31 @@ class MusicService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         println("service: onStartCommand")
         if (intent != null) {
+            println("Service: Intent")
             if (intent.hasExtra("position")) {
                 position = intent.getIntExtra("position", INVALID_VALUE)
-                if (position != INVALID_VALUE)
-                    startSong()
+                if (position != INVALID_VALUE) {
+                    startSong(position)
+                }
             } else {
+                println(intent.getIntExtra(REQUEST_CODE, INVALID_VALUE).toString())
                 when (intent.getIntExtra(REQUEST_CODE, INVALID_VALUE)) {
-                    REQUEST_CODE_PLAY -> playSong(position)
                     REQUEST_CODE_NEXT -> playNextSong()
                     REQUEST_CODE_PREV -> playPrevSong()
+                    REQUEST_CODE_PLAY -> playSong()
+                    REQUEST_CODE_PAUSE -> pauseSong()
                 }
             }
+        } else {
+            startForeground(NOTIFICATION_ID, createNotification(REQUEST_CODE_PAUSE))
         }
-        startForeground(NOTIFICATION_ID, createNotification())
         return START_NOT_STICKY
     }
 
-    private fun createNotification(): Notification {
+    private fun createNotification(type: Int): Notification {
         return NotificationCompat.Builder(this@MusicService, CHANNEL_ID)
             .apply {
-                setContentTitle(if (position != INVALID_VALUE) songList[position].title else "NO SONG FOUND")
+                setContentTitle(getNameSong())
                 setContentText(durationToString())
                 setOnlyAlertOnce(true)
                 setShowWhen(false)
@@ -108,11 +117,19 @@ class MusicService : Service() {
                     "prev",
                     createPendingIntent(REQUEST_CODE_PREV)
                 )
-                addAction(
-                    R.drawable.notification_ic_play,
-                    "play",
-                    createPendingIntent(REQUEST_CODE_PLAY)
-                )
+                if (type == REQUEST_CODE_PLAY) {
+                    addAction(
+                        R.drawable.notification_ic_play,
+                        "play",
+                        createPendingIntent(REQUEST_CODE_PLAY)
+                    )
+                } else {
+                    addAction(
+                        R.drawable.notification_ic_pause,
+                        "play",
+                        createPendingIntent(REQUEST_CODE_PAUSE)
+                    )
+                }
                 addAction(
                     R.drawable.notification_ic_next,
                     "next",
@@ -127,47 +144,43 @@ class MusicService : Service() {
             }.build()
     }
 
-    private fun startSong() {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer.create(this@MusicService, songList[position].music)
-        mediaPlayer?.start()
-        mediaPlayer?.setOnCompletionListener {
-            playNextSong()
-        }
-    }
-
-    fun playPrevSong() {
-        if (position >= 0) {
-            if (position == 0) {
-                position = songList.size
-            }
-            position--
-            startSong()
-        }
+    private fun playPrevSong() {
+        startSong(if (position <= 0) songList.size - 1 else position - 1)
     }
 
     fun playNextSong() {
-        if (position >= 0) {
-            position++
-            if (position == songList.size) {
-                position = 0
+        startSong(if (position + 1 == songList.size) 0 else position + 1)
+    }
+
+    fun startSong(position: Int) {
+        if (this.position != position && position != INVALID_VALUE) {
+            this.position = position
+            CoroutineScope(Dispatchers.IO).launch {
+                mediaPlayer?.stop()
+                mediaPlayer?.release()
+                mediaPlayer = MediaPlayer.create(this@MusicService, songList[position].music)
+                startForeground(NOTIFICATION_ID, createNotification(REQUEST_CODE_PAUSE))
+                mediaPlayer?.start()
+                mediaPlayer?.setOnCompletionListener {
+                    playNextSong()
+                }
             }
-            startSong()
+            positionLiveData.postValue(position)
         }
     }
 
-    fun playSong(position: Int) {
-        if (this.position == position) {
-            if (mediaPlayer?.isPlaying == true) {
-                mediaPlayer?.pause()
-            } else {
-                mediaPlayer?.start()
-            }
-        } else {
-            this.position = position
-            startSong()
+    private fun pauseSong() {
+        CoroutineScope(Dispatchers.IO).launch {
+            startForeground(NOTIFICATION_ID, createNotification(REQUEST_CODE_PLAY))
         }
+        mediaPlayer?.pause()
+    }
+
+    private fun playSong() {
+        CoroutineScope(Dispatchers.IO).launch {
+            startForeground(NOTIFICATION_ID, createNotification(REQUEST_CODE_PAUSE))
+        }
+        mediaPlayer?.start()
     }
 
     private fun createPendingIntent(requestCode: Int): PendingIntent {
@@ -194,8 +207,14 @@ class MusicService : Service() {
         this.songList = songList
     }
 
-    fun getSongList(): ArrayList<SongClass> {
-        return songList
+    fun getNameSong(): String {
+        if (position == INVALID_VALUE)
+            return "NO SONG FOUND"
+        return songList[position].title.toString()
     }
 
+    fun getPosition(): MutableLiveData<Int> = positionLiveData
+
 }
+
+

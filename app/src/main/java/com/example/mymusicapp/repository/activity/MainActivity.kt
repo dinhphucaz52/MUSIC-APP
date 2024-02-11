@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentTransaction
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainView: FrameLayout
     private lateinit var bottomNav: BottomNavigationView
     private lateinit var mainNextSongBtn: ImageView
+    private lateinit var mainNameSong: TextView
 
     private var statusFragment: StatusFragmentEnum = StatusFragmentEnum.HOME_FRAGMENT
     private val fragmentManager = supportFragmentManager
@@ -53,35 +55,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var songViewModel: SongViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
+        println("main: onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         songViewModel = ViewModelProvider(this)[SongViewModel::class.java]
         songViewModel.init()
-        songViewModel.getData().observe(this) { songList ->
-            myMusicService?.updateData(songList)
-        }
-
 
         requestPermission()
         mappingView()
         startMusicService()
 
-
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        myMusicService?.updateData(songViewModel.songList)
-
-        val homeFragment = HomeFragment() { position ->
-            println("$position")
-            myMusicService?.playSong(position)
-        }
+        val homeFragment = HomeFragment()
         val searchFragments = SearchFragment()
-
 
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.mainView, homeFragment).commit()
@@ -111,7 +97,23 @@ class MainActivity : AppCompatActivity() {
         mainNextSongBtn.setOnClickListener {
             myMusicService?.playNextSong()
         }
+        songViewModel.getSongList().observe(this) { songList ->
+            myMusicService?.updateData(songList)
+        }
+        songViewModel.getPosition().observe(this) {position ->
+            myMusicService?.startSong(position)
+        }
 
+    }
+
+    override fun onResume() {
+        println("main: onResume")
+        super.onResume()
+        myMusicService?.updateData(songViewModel.songList)
+        myMusicService?.getPosition()?.observe(this) {position ->
+            mainNameSong.text = myMusicService?.getNameSong()
+            songViewModel.updatePosition(position)
+        }
     }
 
     private fun startMusicService() {
@@ -128,7 +130,8 @@ class MainActivity : AppCompatActivity() {
             arrayOf(
                 Manifest.permission.POST_NOTIFICATIONS,
                 Manifest.permission.FOREGROUND_SERVICE,
-                Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
+                Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK,
+                Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
             ),
             REQUEST_CODE_PERMISSION
         )
@@ -138,5 +141,6 @@ class MainActivity : AppCompatActivity() {
         mainView = findViewById(R.id.mainView)
         bottomNav = findViewById(R.id.bottomNav)
         mainNextSongBtn = findViewById(R.id.mainNextSongBtn)
+        mainNameSong = findViewById(R.id.mainNameSong)
     }
 }

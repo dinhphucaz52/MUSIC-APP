@@ -5,22 +5,24 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mymusicapp.R
 import com.example.mymusicapp.data.model.SongClass
+import com.example.mymusicapp.data.service.MusicService
 
 
 class SongViewModel : ViewModel() {
-    private val data = MutableLiveData<ArrayList<SongClass>>()
+    private val dataLiveData = MutableLiveData<ArrayList<SongClass>>()
+    private val positionLiveData = MutableLiveData<Int>()
     val songList = ArrayList<SongClass>()
     private fun setData() {
-        data.value = songList
+        dataLiveData.value = songList
+        positionLiveData.value = MusicService.INVALID_VALUE
     }
 
-    fun getData(): LiveData<ArrayList<SongClass>> {
-        return data
+    fun getSongList(): LiveData<ArrayList<SongClass>> {
+        return dataLiveData
     }
 
-    fun addSong(song: SongClass) {
-        songList.add(song)
-        setData()
+    fun getPosition(): LiveData<Int> {
+        return positionLiveData
     }
 
     fun init() {
@@ -37,5 +39,9 @@ class SongViewModel : ViewModel() {
             it.title
         }
         setData()
+    }
+
+    fun updatePosition(position: Int) {
+        positionLiveData.postValue(position)
     }
 }
