@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymusicapp.R
-import com.example.mymusicapp.data.model.SongClass
+import com.example.mymusicapp.data.model.AudioFile
 import com.example.mymusicapp.repository.adapter.SongAdapter
 import com.example.mymusicapp.repository.viewmodel.SongViewModel
 
@@ -35,7 +35,7 @@ class HomeFragment() : Fragment() {
         ViewModelProvider(requireActivity())[SongViewModel::class.java]
     }
 
-    private var audioList = ArrayList<SongClass>()
+    private var audioList = ArrayList<AudioFile>()
     private lateinit var songRecyclerView: RecyclerView
 
 
@@ -69,12 +69,6 @@ class HomeFragment() : Fragment() {
         shareSongViewModel.getSongList().observe(viewLifecycleOwner) { songList ->
             songAdapter.updateData(songList)
         }
-
-        shareSongViewModel.getPosition().observe(viewLifecycleOwner) { position ->
-//            songAdapter.notifyItemChanged(position)
-            println("HomeFragment: $position")
-        }
-
     }
 
     companion object {

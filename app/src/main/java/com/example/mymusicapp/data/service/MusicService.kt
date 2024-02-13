@@ -14,7 +14,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.MutableLiveData
 import com.example.mymusicapp.R
-import com.example.mymusicapp.data.model.SongClass
+import com.example.mymusicapp.data.model.AudioFile
+import com.example.mymusicapp.repository.myobject.Thumbnail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ class MusicService : Service() {
 
     private var position: Int = INVALID_VALUE
     private var mediaPlayer: MediaPlayer? = null
-    private var songList = ArrayList<SongClass>()
+    private var songList = ArrayList<AudioFile>()
 
     private val notificationManagerCompat: NotificationManagerCompat by lazy {
         NotificationManagerCompat.from(this@MusicService)
@@ -77,14 +78,12 @@ class MusicService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         println("service: onStartCommand")
         if (intent != null) {
-            println("Service: Intent")
             if (intent.hasExtra("position")) {
                 position = intent.getIntExtra("position", INVALID_VALUE)
                 if (position != INVALID_VALUE) {
                     startSong(position)
                 }
             } else {
-                println(intent.getIntExtra(REQUEST_CODE, INVALID_VALUE).toString())
                 when (intent.getIntExtra(REQUEST_CODE, INVALID_VALUE)) {
                     REQUEST_CODE_NEXT -> playNextSong()
                     REQUEST_CODE_PREV -> playPrevSong()
@@ -105,12 +104,9 @@ class MusicService : Service() {
                 setContentText(durationToString())
                 setOnlyAlertOnce(true)
                 setShowWhen(false)
-                setSmallIcon(R.drawable.ic_launcher_background, 1)
+                setSmallIcon(R.drawable.item_ic_song, 1)
                 setLargeIcon(
-                    BitmapFactory.decodeResource(
-                        resources,
-                        R.drawable.ic_launcher_background
-                    )
+                    Thumbnail.getMp3Thumbnail(songList[position].path)
                 )
                 addAction(
                     R.drawable.notification_ic_prev,
@@ -158,7 +154,7 @@ class MusicService : Service() {
             CoroutineScope(Dispatchers.IO).launch {
                 mediaPlayer?.stop()
                 mediaPlayer?.release()
-                mediaPlayer = MediaPlayer.create(this@MusicService, songList[position].music)
+                mediaPlayer = MediaPlayer.create(this@MusicService, songList[position].contentUri)
                 startForeground(NOTIFICATION_ID, createNotification(REQUEST_CODE_PAUSE))
                 mediaPlayer?.start()
                 mediaPlayer?.setOnCompletionListener {
@@ -203,14 +199,14 @@ class MusicService : Service() {
         return "NULL"
     }
 
-    fun updateData(songList: ArrayList<SongClass>) {
+    fun updateData(songList: ArrayList<AudioFile>) {
         this.songList = songList
     }
 
     fun getNameSong(): String {
         if (position == INVALID_VALUE)
             return "NO SONG FOUND"
-        return songList[position].title.toString()
+        return songList[position].title
     }
 
     fun getPosition(): MutableLiveData<Int> = positionLiveData

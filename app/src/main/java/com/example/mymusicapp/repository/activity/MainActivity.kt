@@ -16,10 +16,12 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.example.mymusicapp.R
 import com.example.mymusicapp.data.enum.StatusFragmentEnum
+import com.example.mymusicapp.data.model.AudioFile
 import com.example.mymusicapp.data.service.MusicService
 import com.example.mymusicapp.repository.fragment.HomeFragment
 import com.example.mymusicapp.repository.fragment.SearchFragment
 import com.example.mymusicapp.repository.viewmodel.SongViewModel
+import com.example.mymusicapp.util.AudioManagerUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 
@@ -54,17 +56,22 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var songViewModel: SongViewModel
 
+    private var audioManager = AudioManagerUtil(this@MainActivity)
+    private var songList = mutableListOf<AudioFile>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         println("main: onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         songViewModel = ViewModelProvider(this)[SongViewModel::class.java]
-        songViewModel.init()
+        songList = audioManager.getAllAudioFiles().toMutableList()
+        songViewModel.init(songList)
 
         requestPermission()
         mappingView()
         startMusicService()
+
 
         val homeFragment = HomeFragment()
         val searchFragments = SearchFragment()
@@ -72,45 +79,47 @@ class MainActivity : AppCompatActivity() {
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.mainView, homeFragment).commit()
 
-        bottomNav.setOnItemSelectedListener(
-            NavigationBarView.OnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.home_menu -> {
-                        if (statusFragment != StatusFragmentEnum.HOME_FRAGMENT) {
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.mainView, homeFragment).commit()
-                            statusFragment = StatusFragmentEnum.HOME_FRAGMENT
-                        }
-                    }
 
-                    R.id.search_menu -> {
-                        if (statusFragment != StatusFragmentEnum.SEARCH_FRAGMENT) {
-                            supportFragmentManager.beginTransaction()
-                                .replace(R.id.mainView, searchFragments).commit()
-                            statusFragment = StatusFragmentEnum.SEARCH_FRAGMENT
-                        }
+        bottomNav.setOnItemSelectedListener {item ->
+            when (item.itemId) {
+                R.id.home_menu -> {
+                    if (statusFragment != StatusFragmentEnum.HOME_FRAGMENT) {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.mainView, homeFragment).commit()
+                        statusFragment = StatusFragmentEnum.HOME_FRAGMENT
                     }
                 }
-                false
-            })
+
+                R.id.search_menu -> {
+                    if (statusFragment != StatusFragmentEnum.SEARCH_FRAGMENT) {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.mainView, searchFragments).commit()
+                        statusFragment = StatusFragmentEnum.SEARCH_FRAGMENT
+                    }
+                }
+            }
+            false
+        }
 
         mainNextSongBtn.setOnClickListener {
             myMusicService?.playNextSong()
         }
-        songViewModel.getSongList().observe(this) { songList ->
-            myMusicService?.updateData(songList)
-        }
-        songViewModel.getPosition().observe(this) {position ->
+
+        songViewModel.getPosition().observe(this) { position ->
             myMusicService?.startSong(position)
         }
+
+
 
     }
 
     override fun onResume() {
         println("main: onResume")
         super.onResume()
-        myMusicService?.updateData(songViewModel.songList)
-        myMusicService?.getPosition()?.observe(this) {position ->
+        songViewModel.getSongList().observe(this) { songList ->
+            myMusicService?.updateData(songList)
+        }
+        myMusicService?.getPosition()?.observe(this) { position ->
             mainNameSong.text = myMusicService?.getNameSong()
             songViewModel.updatePosition(position)
         }
@@ -120,7 +129,6 @@ class MainActivity : AppCompatActivity() {
         val musicServiceIntent = Intent(this@MainActivity, MusicService::class.java)
         bindService(musicServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
         val serviceIntent = Intent(this@MainActivity, MusicService::class.java)
-        serviceIntent.putExtra("position", MusicService.INVALID_VALUE)
         startService(serviceIntent)
     }
 
@@ -128,10 +136,10 @@ class MainActivity : AppCompatActivity() {
         ActivityCompat.requestPermissions(
             this@MainActivity,
             arrayOf(
-                Manifest.permission.POST_NOTIFICATIONS,
+                Manifest.permission.READ_MEDIA_AUDIO,
                 Manifest.permission.FOREGROUND_SERVICE,
+                Manifest.permission.POST_NOTIFICATIONS,
                 Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK,
-                Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
             ),
             REQUEST_CODE_PERMISSION
         )
