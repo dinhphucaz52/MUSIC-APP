@@ -26,9 +26,6 @@ class SongViewModel : ViewModel() {
 
     fun init(allAudioFiles: List<AudioFile>) {
         songList = allAudioFiles as ArrayList<AudioFile>
-        songList.sortBy {
-            it.title
-        }
         setData()
     }
 

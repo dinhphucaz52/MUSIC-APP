@@ -104,9 +104,9 @@ class MusicService : Service() {
                 setContentText(durationToString())
                 setOnlyAlertOnce(true)
                 setShowWhen(false)
-                setSmallIcon(R.drawable.item_ic_song, 1)
+                setSmallIcon(R.drawable.item_ic_song, 0)
                 setLargeIcon(
-                    Thumbnail.getMp3Thumbnail(songList[position].path)
+                    songList[position].thumbnail
                 )
                 addAction(
                     R.drawable.notification_ic_prev,

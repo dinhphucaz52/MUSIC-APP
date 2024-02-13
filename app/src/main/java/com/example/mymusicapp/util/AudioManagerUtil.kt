@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import com.example.mymusicapp.data.model.AudioFile
+import com.example.mymusicapp.repository.myobject.Thumbnail
 
 class AudioManagerUtil(private val context: Context) {
 
@@ -18,7 +19,7 @@ class AudioManagerUtil(private val context: Context) {
         val projection = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
-            MediaStore.Audio.Media.DATA
+            MediaStore.Audio.Media.DATA,
         )
 
         // Sắp xếp theo tên file âm thanh
@@ -40,7 +41,7 @@ class AudioManagerUtil(private val context: Context) {
                     id
                 )
 
-                audioFiles.add(AudioFile(id, title, data, contentUri))
+                audioFiles.add(AudioFile(id, title, data, contentUri, Thumbnail.getMp3Thumbnail(filePath = data)))
             }
         }
 

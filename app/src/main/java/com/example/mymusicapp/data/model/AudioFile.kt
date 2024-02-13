@@ -1,22 +1,26 @@
 package com.example.mymusicapp.data.model
 
 
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
+import com.example.mymusicapp.repository.myobject.Thumbnail
 
 @Suppress("DEPRECATION")
 data class AudioFile(
     val id: Long,
     val title: String,
     val path: String,
-    val contentUri: Uri?
+    val contentUri: Uri?,
+    val thumbnail: Bitmap?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readLong(),
         parcel.readString().toString(),
         parcel.readString().toString(),
-        parcel.readParcelable(Uri::class.java.classLoader)
+        parcel.readParcelable(Uri::class.java.classLoader),
+        parcel.readParcelable(Bitmap::class.java.classLoader)
     ) {
     }
 
@@ -25,6 +29,7 @@ data class AudioFile(
         parcel.writeString(title)
         parcel.writeString(path)
         parcel.writeParcelable(contentUri, flags)
+        parcel.writeParcelable(thumbnail, flags)
     }
 
     override fun describeContents(): Int {
@@ -40,5 +45,4 @@ data class AudioFile(
             return arrayOfNulls(size)
         }
     }
-
 }

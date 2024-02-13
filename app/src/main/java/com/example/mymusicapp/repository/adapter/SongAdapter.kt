@@ -22,12 +22,8 @@ class SongAdapter(
     private val listener: (position: Int) -> Unit
 ) : RecyclerView.Adapter<SongAdapter.ViewHolder>() {
 
-    private var preViewHolder: ViewHolder? = null
-
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val musicNameTxtView: TextView = itemView.findViewById(R.id.musicNameTxtView)
-        //        val durationTxtView: TextView = itemView.findViewById(R.id.durationTxtView)
-        val itemBackground: LinearLayout = itemView.findViewById(R.id.itemBackground)
         val thumbnail: ImageView = itemView.findViewById(R.id.thumbnail)
     }
 
@@ -40,13 +36,9 @@ class SongAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val song = songList[position]
         holder.musicNameTxtView.text = song.title
-//        holder.thumbnail.setImageBitmap(getMp3Thumbnail(songList[position].path))
-        holder.thumbnail.setImageBitmap(Thumbnail.getMp3Thumbnail(songList[position].path))
+        holder.thumbnail.setImageBitmap(song.thumbnail)
         holder.itemView.setOnClickListener {
             listener.invoke(position)
-            preViewHolder?.itemView?.setBackgroundResource(R.drawable.item_background)
-            holder.itemBackground.setBackgroundResource(R.drawable.item_background_clicked)
-            preViewHolder = holder
         }
     }
 

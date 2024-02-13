@@ -24,6 +24,9 @@ import com.example.mymusicapp.repository.viewmodel.SongViewModel
 import com.example.mymusicapp.util.AudioManagerUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -80,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         fragmentTransaction.replace(R.id.mainView, homeFragment).commit()
 
 
-        bottomNav.setOnItemSelectedListener {item ->
+        bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.home_menu -> {
                     if (statusFragment != StatusFragmentEnum.HOME_FRAGMENT) {
@@ -108,7 +111,6 @@ class MainActivity : AppCompatActivity() {
         songViewModel.getPosition().observe(this) { position ->
             myMusicService?.startSong(position)
         }
-
 
 
     }
