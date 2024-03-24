@@ -1,4 +1,4 @@
-package com.example.mymusicapp.repository.myobject
+package com.example.mymusicapp.presentation.myobject
 
 import android.content.res.Resources
 import android.graphics.Bitmap

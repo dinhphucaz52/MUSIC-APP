@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
-import com.example.mymusicapp.repository.myobject.Thumbnail
 
 @Suppress("DEPRECATION")
 data class AudioFile(

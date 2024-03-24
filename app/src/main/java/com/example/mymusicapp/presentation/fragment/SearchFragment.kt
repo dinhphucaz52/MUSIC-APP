@@ -1,4 +1,4 @@
-package com.example.mymusicapp.repository.fragment
+package com.example.mymusicapp.presentation.fragment
 
 import android.content.Context
 import android.os.Bundle

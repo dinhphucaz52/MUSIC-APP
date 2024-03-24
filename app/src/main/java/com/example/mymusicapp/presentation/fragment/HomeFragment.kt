@@ -1,4 +1,4 @@
-package com.example.mymusicapp.repository.fragment
+package com.example.mymusicapp.presentation.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymusicapp.R
 import com.example.mymusicapp.data.model.AudioFile
-import com.example.mymusicapp.repository.adapter.SongAdapter
-import com.example.mymusicapp.repository.viewmodel.SongViewModel
+import com.example.mymusicapp.presentation.adapter.SongAdapter
+import com.example.mymusicapp.presentation.viewmodel.SongViewModel
 
 
 // TODO: Rename parameter arguments, choose names that match

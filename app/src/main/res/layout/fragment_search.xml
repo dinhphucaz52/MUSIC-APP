@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bottom_nav_true"
-    tools:context=".repository.fragment.SearchFragment">
+    tools:context=".presentation.fragment.SearchFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

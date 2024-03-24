@@ -1,4 +1,4 @@
-package com.example.mymusicapp.repository.activity
+package com.example.mymusicapp.presentation.activity
 
 import android.Manifest
 import android.content.ComponentName
@@ -18,15 +18,11 @@ import com.example.mymusicapp.R
 import com.example.mymusicapp.data.enum.StatusFragmentEnum
 import com.example.mymusicapp.data.model.AudioFile
 import com.example.mymusicapp.data.service.MusicService
-import com.example.mymusicapp.repository.fragment.HomeFragment
-import com.example.mymusicapp.repository.fragment.SearchFragment
-import com.example.mymusicapp.repository.viewmodel.SongViewModel
+import com.example.mymusicapp.presentation.fragment.HomeFragment
+import com.example.mymusicapp.presentation.fragment.SearchFragment
+import com.example.mymusicapp.presentation.viewmodel.SongViewModel
 import com.example.mymusicapp.util.AudioManagerUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {

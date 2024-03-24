@@ -5,7 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import com.example.mymusicapp.data.model.AudioFile
-import com.example.mymusicapp.repository.myobject.Thumbnail
+import com.example.mymusicapp.presentation.myobject.Thumbnail
 
 class AudioManagerUtil(private val context: Context) {
 

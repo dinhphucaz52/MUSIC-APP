@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:padding="10dp"
     android:weightSum="10"
-    tools:context=".repository.activity.MainActivity">
+    tools:context=".presentation.activity.MainActivity">
 
     <TextView
         android:layout_width="match_parent"

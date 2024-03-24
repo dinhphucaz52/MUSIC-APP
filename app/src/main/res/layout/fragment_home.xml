@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/main_background"
     android:padding="7dp"
-    tools:context=".repository.fragment.HomeFragment">
+    tools:context=".presentation.fragment.HomeFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/songRecyclerView"
