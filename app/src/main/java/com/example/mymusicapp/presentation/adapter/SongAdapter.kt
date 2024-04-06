@@ -13,59 +13,33 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymusicapp.data.model.AudioFile
 import com.example.mymusicapp.R
+import com.example.mymusicapp.databinding.ItemMusicBinding
 
 
 class SongAdapter(
-    private var songList: List<AudioFile>,
     private val listener: (position: Int) -> Unit
 ) : RecyclerView.Adapter<SongAdapter.ViewHolder>() {
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val musicNameTxtView: TextView = itemView.findViewById(R.id.musicNameTxtView)
-        val thumbnail: ImageView = itemView.findViewById(R.id.thumbnail)
-    }
+    private var songList = ArrayList<AudioFile>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_music, parent, false)
-        return ViewHolder(itemView)
-    }
+    inner class ViewHolder(var binding: ItemMusicBinding) : RecyclerView.ViewHolder(binding.root)
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
+        ViewHolder(ItemMusicBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val song = songList[position]
-        holder.musicNameTxtView.text = song.title
-        holder.thumbnail.setImageBitmap(song.thumbnail)
-        holder.itemView.setOnClickListener {
-            listener.invoke(position)
+        holder.binding.apply {
+            musicNameTxtView.text = song.getTitle()
+            thumbnail.setImageBitmap(song.getThumbnail())
+            root.setOnClickListener {
+                listener.invoke(position)
+            }
         }
     }
 
     override fun getItemCount(): Int {
         return songList.size
-    }
-
-    @Deprecated("test")
-    private fun getMp3Thumbnail(filePath: String): Bitmap? {
-        val retriever = MediaMetadataRetriever()
-
-        try {
-            retriever.setDataSource(filePath)
-            val embeddedThumbnail = retriever.embeddedPicture
-
-            return if (embeddedThumbnail != null) {
-                BitmapFactory.decodeByteArray(embeddedThumbnail, 0, embeddedThumbnail.size)
-            } else {
-                BitmapFactory.decodeResource(
-                    Resources.getSystem(),
-                    R.drawable.item_ic_song
-                )
-            }
-        } catch (e: Exception) {
-            println("Error extracting thumbnail from MP3: ${e.message}")
-            return null
-        } finally {
-            retriever.release()
-        }
     }
 
     @SuppressLint("NotifyDataSetChanged")

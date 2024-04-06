@@ -20,18 +20,20 @@
         android:textColor="@color/main_text_color"
         android:textSize="40sp" />
 
-    <FrameLayout
+    <fragment
         android:id="@+id/mainView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:layout_weight="9"
-        android:background="@color/song_item_text_color" />
+        app:navGraph="@navigation/nav_graph"
+        tools:ignore="FragmentTagUsage" />
 
     <LinearLayout
-        android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="5dp"
         android:layout_weight="1"
         android:orientation="horizontal">
 
@@ -44,7 +46,7 @@
             android:src="@drawable/main_activity_ic_song_list" />
 
         <TextView
-            android:id="@+id/mainNameSong"
+            android:id="@+id/tv_song_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -58,7 +60,7 @@
             tools:ignore="NestedWeights" />
 
         <ImageView
-            android:id="@+id/mainNextSongBtn"
+            android:id="@+id/btn_next_song"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:adjustViewBounds="true"
