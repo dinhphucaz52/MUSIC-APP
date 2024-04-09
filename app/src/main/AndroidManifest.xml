@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -17,18 +17,35 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMusicApp">
         <activity
+            android:name=".presentation.activity.SongActivity"
+            android:exported="false" />
+        <activity
             android:name=".presentation.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--        <service-->
+        <!--            android:name=".data.service.MusicService"-->
+        <!--            android:description="@string/app_name"-->
+        <!--            android:enabled="true"-->
+        <!--            android:foregroundServiceType="mediaPlayback" />-->
         <service
             android:name=".data.service.MusicService"
             android:description="@string/app_name"
-            android:foregroundServiceType="mediaPlayback"
-            android:enabled="true" />
+            android:enabled="true"
+            android:foregroundServiceType="mediaPlayback">
+        </service>
+
+        <service
+            android:name=".data.service.MyMusicService"
+            android:description="@string/app_name"
+            android:enabled="true"
+            android:foregroundServiceType="mediaPlayback" />
     </application>
 
 </manifest>

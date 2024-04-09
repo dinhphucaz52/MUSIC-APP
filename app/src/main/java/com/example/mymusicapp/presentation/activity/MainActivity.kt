@@ -1,7 +1,6 @@
 package com.example.mymusicapp.presentation.activity
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -15,6 +14,9 @@ import com.example.mymusicapp.data.repository.MainRepository
 import com.example.mymusicapp.data.service.MusicService
 import com.example.mymusicapp.databinding.ActivityMainBinding
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
@@ -50,10 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun dataBinding() {
         mainMVVM.observeSong().observe(this@MainActivity) {
-            if (it == null) {
-                binding.tvSongName.text = "NO SONGS FOUND"
-            } else
-                binding.tvSongName.text = it.getTitle()
+//            binding.tvSongName.text = mainMVVM.getAudioFile()?.getTitle() ?: "NO SONGS FOUND"
         }
     }
 
@@ -68,6 +67,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setEvents() {
+//        binding.tvSongName.setOnClickListener {
+//            val intent = Intent(this@MainActivity, SongActivity::class.java)
+//            startActivity(intent)
+//        }
     }
 
     override fun onResume() {
@@ -76,10 +79,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startMusicService() {
-        val musicServiceIntent = Intent(this@MainActivity, MusicService::class.java)
-        bindService(musicServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-        val serviceIntent = Intent(this@MainActivity, MusicService::class.java)
-        startService(serviceIntent)
+        CoroutineScope(Dispatchers.IO).launch {
+            val musicServiceIntent = Intent(this@MainActivity, MusicService::class.java)
+            bindService(musicServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+            val serviceIntent = Intent(this@MainActivity, MusicService::class.java)
+            startService(serviceIntent)
+        }
     }
 
     private fun requestPermission() {

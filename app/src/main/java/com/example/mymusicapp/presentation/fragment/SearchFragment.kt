@@ -1,22 +1,15 @@
 package com.example.mymusicapp.presentation.fragment
 
-import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.mymusicapp.R
 import com.example.mymusicapp.databinding.FragmentSearchBinding
 
 class SearchFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchBinding
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        println("searchFragment: onAttach")
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

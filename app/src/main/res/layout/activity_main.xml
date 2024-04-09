@@ -27,58 +27,55 @@
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:layout_weight="9"
-        app:navGraph="@navigation/nav_graph"
-        tools:ignore="FragmentTagUsage" />
+        app:navGraph="@navigation/nav_graph"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:layout_weight="1"-->
+<!--        android:orientation="horizontal">-->
 
-        <ImageView
-            android:id="@+id/test"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/main_activity_ic_song_list" />
+<!--        <ImageView-->
+<!--            android:id="@+id/test"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:adjustViewBounds="true"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:src="@drawable/main_activity_ic_song_list" />-->
 
-        <TextView
-            android:id="@+id/tv_song_name"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:text="@string/no_song_found"
-            android:textColor="@color/main_text_color"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            tools:ignore="NestedWeights" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_song_name"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:paddingLeft="10dp"-->
+<!--            android:paddingRight="10dp"-->
+<!--            android:text="@string/no_song_found"-->
+<!--            android:textColor="@color/main_text_color"-->
+<!--            android:textSize="26sp"-->
+<!--            android:textStyle="bold"-->
+<!--            tools:ignore="NestedWeights" />-->
 
-        <ImageView
-            android:id="@+id/btn_next_song"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/song_layout_ic_next" />
+<!--        <ImageView-->
+<!--            android:id="@+id/btn_next_song"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:adjustViewBounds="true"-->
+<!--            android:scaleType="centerCrop"-->
+<!--            android:src="@drawable/song_layout_ic_next" />-->
 
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:animateLayoutChanges="true"
         android:background="@color/main_background"
         android:padding="3dp"
-        app:itemIconTint="@color/bottom_nav_selector"
-        app:itemTextColor="@color/bottom_nav_selector"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
         app:menu="@menu/bottom_nav" />
 
 

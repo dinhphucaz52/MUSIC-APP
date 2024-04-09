@@ -1,13 +1,13 @@
 package com.example.mymusicapp.presentation.viewmodel
 
-import android.provider.MediaStore.Audio
 import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.model.AudioFile
+import com.example.mymusicapp.data.model.Song
 import com.example.mymusicapp.data.repository.MainRepository
-import com.example.mymusicapp.data.service.MusicService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,9 +27,13 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private val song: AudioFile? = null
-    private val songListLiveData = MutableLiveData<ArrayList<AudioFile>>()
+
+    private var duration: Long? = null
+    private var position: Int = AppCommon.INVALID_VALUE
+    private var song: AudioFile = AudioFile()
+    private var songList = ArrayList<AudioFile>()
     private val songLiveData = MutableLiveData<AudioFile?>()
+    private val songListLiveData = MutableLiveData<ArrayList<AudioFile>>()
 
     fun setRepository(mainRepository: MainRepository) {
         this.mainRepository = mainRepository
@@ -40,9 +44,34 @@ class MainViewModel : ViewModel() {
 
     fun loadData() {
         CoroutineScope(Dispatchers.IO).launch {
-            songListLiveData.postValue(mainRepository.getAllAudioFiles())
+            songList = mainRepository.getAllAudioFiles()
+            songListLiveData.postValue(songList)
         }
     }
 
-    fun getSong() = song
+    fun getAudioFile(): AudioFile = song
+
+    fun setSong(position: Int) {
+        this.position = position
+        song = songList[position]
+        songLiveData.postValue(song)
+    }
+
+    fun getSongList() = songList
+
+    fun setNextSong() {
+        song = songList[++position]
+        songLiveData.postValue(song)
+    }
+
+    fun setPreviousSong() {
+        song = songList[--position]
+        songLiveData.postValue(song)
+    }
+
+    fun setDuration(duration: Long?) {
+        this.duration = duration
+    }
+
+    fun getDuration() = duration
 }
