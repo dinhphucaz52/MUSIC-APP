@@ -1,8 +1,6 @@
 package com.example.mymusicapp.presentation.activity
 
 import android.os.Bundle
-import android.widget.SeekBar
-import android.widget.SeekBar.OnSeekBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mymusicapp.databinding.ActivitySongBinding
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
