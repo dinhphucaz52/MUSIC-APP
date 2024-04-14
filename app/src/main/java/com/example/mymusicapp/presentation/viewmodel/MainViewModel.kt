@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.model.AudioFile
-import com.example.mymusicapp.data.model.Song
 import com.example.mymusicapp.data.repository.MainRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,48 +27,53 @@ class MainViewModel : ViewModel() {
     }
 
 
-    private var duration: Long? = null
+    private var duration: Long = 0
     private var position: Int = AppCommon.INVALID_VALUE
-    private var song: AudioFile = AudioFile()
     private var songList = ArrayList<AudioFile>()
+    private val positionLiveData = MutableLiveData<Int>()
     private val songLiveData = MutableLiveData<AudioFile?>()
     private val songListLiveData = MutableLiveData<ArrayList<AudioFile>>()
 
+    //
     fun setRepository(mainRepository: MainRepository) {
         this.mainRepository = mainRepository
     }
 
+    //
     fun observeSongList(): LiveData<ArrayList<AudioFile>> = songListLiveData
+
     fun observeSong(): LiveData<AudioFile?> = songLiveData
+    fun observePosition(): LiveData<Int> = positionLiveData
 
     fun loadData() {
         CoroutineScope(Dispatchers.IO).launch {
             songList = mainRepository.getAllAudioFiles()
+            println("MainViewModel $songList")
             songListLiveData.postValue(songList)
         }
     }
 
-    fun getAudioFile(): AudioFile = song
 
+    //
     fun setSong(position: Int) {
         this.position = position
-        song = songList[position]
-        songLiveData.postValue(song)
+        positionLiveData.postValue(position)
+        songLiveData.postValue(songList[position])
     }
 
     fun getSongList() = songList
 
     fun setNextSong() {
-        song = songList[++position]
-        songLiveData.postValue(song)
+        songLiveData.postValue(songList[++position])
+        positionLiveData.postValue(position)
     }
 
     fun setPreviousSong() {
-        song = songList[--position]
-        songLiveData.postValue(song)
+        songLiveData.postValue(songList[--position])
+        positionLiveData.postValue(position)
     }
 
-    fun setDuration(duration: Long?) {
+    fun setDuration(duration: Long) {
         this.duration = duration
     }
 

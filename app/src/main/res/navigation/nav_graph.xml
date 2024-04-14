@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
-
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.mymusicapp.presentation.fragment.HomeFragment"

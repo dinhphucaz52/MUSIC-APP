@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
+import com.example.mymusicapp.R
 import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.repository.MainRepository
 import com.example.mymusicapp.data.service.MusicService
@@ -22,6 +25,10 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val navController by lazy {
+        findNavController(R.id.mainView)
+    }
+
 
     private var isBound = false
     private var myMusicService: MusicService? = null
@@ -37,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var mainMVVM: MainViewModel
+    private val mainMVVM = MainViewModel.getInstance()
     private lateinit var mainRepository: MainRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,26 +58,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun dataBinding() {
-        mainMVVM.observeSong().observe(this@MainActivity) {
+//        mainMVVM.observeSong().observe(this@MainActivity) {
 //            binding.tvSongName.text = mainMVVM.getAudioFile()?.getTitle() ?: "NO SONGS FOUND"
-        }
+//        }
     }
 
     private fun init() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.bottomNav.setupWithNavController(navController)
         requestPermission()
-        mainMVVM = MainViewModel.getInstance()
         mainRepository = MainRepository(this@MainActivity)
         mainMVVM.setRepository(mainRepository)
         mainMVVM.loadData()
     }
 
     private fun setEvents() {
-//        binding.tvSongName.setOnClickListener {
-//            val intent = Intent(this@MainActivity, SongActivity::class.java)
-//            startActivity(intent)
-//        }
+        binding.tvSongName.setOnClickListener {
+            val intent = Intent(this@MainActivity, SongActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     override fun onResume() {
@@ -79,12 +86,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startMusicService() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val musicServiceIntent = Intent(this@MainActivity, MusicService::class.java)
-            bindService(musicServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-            val serviceIntent = Intent(this@MainActivity, MusicService::class.java)
-            startService(serviceIntent)
-        }
+        val musicServiceIntent = Intent(this@MainActivity, MusicService::class.java)
+        bindService(musicServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
+        val serviceIntent = Intent(this@MainActivity, MusicService::class.java)
+        startService(serviceIntent)
     }
 
     private fun requestPermission() {

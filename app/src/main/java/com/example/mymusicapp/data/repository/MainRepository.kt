@@ -4,7 +4,6 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.provider.MediaStore
 import com.example.mymusicapp.R
@@ -14,6 +13,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MainRepository(private val context: Context) {
+
+
     suspend fun getAllAudioFiles(): ArrayList<AudioFile> {
         return withContext(Dispatchers.IO) {
             val audioFiles = arrayListOf<AudioFile>()

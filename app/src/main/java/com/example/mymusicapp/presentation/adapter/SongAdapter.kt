@@ -46,8 +46,8 @@ class SongAdapter(
     fun updateData(songList: ArrayList<AudioFile>?) {
         if (songList != null) {
             this.songList = songList
+            notifyDataSetChanged()
         }
-        notifyDataSetChanged()
     }
 }
 

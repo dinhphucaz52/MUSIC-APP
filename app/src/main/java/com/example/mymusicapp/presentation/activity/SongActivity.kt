@@ -11,7 +11,7 @@ import com.example.mymusicapp.presentation.viewmodel.MainViewModel
 class SongActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySongBinding
-    private lateinit var mainMVVM: MainViewModel
+    private val mainMVVM = MainViewModel.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,15 +32,19 @@ class SongActivity : AppCompatActivity() {
     }
 
     private fun dataBinding() {
-        mainMVVM.observeSong().observe(this) {
-
+        mainMVVM.observeSong().observe(this) { song ->
+            binding.apply {
+                if (song != null) {
+                    textView.text = song.getTitle()
+                    imageView.setImageBitmap(song.getThumbnail())
+                }
+            }
         }
     }
 
     private fun init() {
         binding = ActivitySongBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        mainMVVM = MainViewModel.getInstance()
     }
 
 }
