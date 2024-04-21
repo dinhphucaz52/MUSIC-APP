@@ -1,21 +1,20 @@
 package com.example.mymusicapp.util
 
 import android.app.Notification
-import android.app.NotificationChannel
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.contentValuesOf
-import androidx.media3.common.util.NotificationUtil
+import androidx.media.session.MediaButtonReceiver
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaLibraryService
 import com.example.mymusicapp.R
 import com.example.mymusicapp.common.AppCommon
-import com.example.mymusicapp.data.model.Song
 
+@UnstableApi
 object NotificationFactory {
 
     fun createNotificationChannel(): NotificationChannelCompat {
@@ -26,55 +25,43 @@ object NotificationFactory {
 
 
     fun createNotification(
-        context: Context,
-        type: Int,
-        songName: String,
-        duration: String,
-//        bitmap: Bitmap,
+        context: Context, mediaSession: MediaLibraryService.MediaLibrarySession
     ): Notification {
         return NotificationCompat.Builder(context, AppCommon.CHANNEL_ID).apply {
-            setContentTitle(songName)
-            setContentText(duration)
             setSmallIcon(R.drawable.item_ic_song, 0)
-//            setLargeIcon(
-//                BitmapFactory.decodeResource(
-//                    Resources.getSystem(),
-//                    R.drawable.item_ic_song
-//                )
-//            )
-//            addAction(
-//                R.drawable.notification_ic_prev,
-//                "prev",
-//                PendingIntentFactory.createPendingIntent(context, AppCommon.REQUEST_CODE_PREV)
-//            )
-//            if (type == AppCommon.REQUEST_CODE_PLAY) {
-//                addAction(
-//                    R.drawable.notification_ic_play,
-//                    "play",
-//                    PendingIntentFactory.createPendingIntent(context, AppCommon.REQUEST_CODE_PLAY)
-//                )
-//            } else {
-//                addAction(
-//                    R.drawable.notification_ic_pause,
-//                    "play",
-//                    PendingIntentFactory.createPendingIntent(context, AppCommon.REQUEST_CODE_PAUSE)
-//                )
-//            }
-//            addAction(
-//                R.drawable.notification_ic_next,
-//                "next",
-//                PendingIntentFactory.createPendingIntent(context, AppCommon.REQUEST_CODE_NEXT)
-//            )
-//            addAction(
-//                R.drawable.repeat,
-//                "loop",
-//                PendingIntentFactory.createPendingIntent(context, AppCommon.REQUEST_CODE_LOOP)
-//            )
-//            setStyle(
-//                androidx.media.app.NotificationCompat.MediaStyle()
-//                    .setShowActionsInCompactView(0, 1, 2)
-//                    .setMediaSession(mediaSession.sessionCompatToken).setShowCancelButton(true)
-//            )
+            setLargeIcon(
+                BitmapFactory.decodeResource(
+                    Resources.getSystem(),
+                    R.drawable.ic_audio_file
+                )
+            )
+            addAction(
+                R.drawable.notification_ic_prev,
+                "Previous",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(
+                    context, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                )
+            )
+            addAction(
+                R.drawable.notification_ic_prev,
+                "Play",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(
+                    context, PlaybackStateCompat.ACTION_PLAY
+                )
+            )
+            addAction(
+                R.drawable.notification_ic_next,
+                "Next",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(
+                    context, PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                )
+            )
+            setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                    .setShowActionsInCompactView(0, 1, 2)
+                    .setMediaSession(mediaSession.sessionCompatToken)
+                    .setShowCancelButton(true)
+            )
         }.build()
     }
 }

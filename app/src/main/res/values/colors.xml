@@ -1,36 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="primary_color">#1e1e2a</color>
+    <color name="secondary_color">#2b2b37</color>
 
-    <color name="main_background">#1e1e2a</color>
-    <color name="main_text_color">#FFFFFFFF</color>
-
-    <color name="song_item_color">#2b2b38</color>
-    <color name="song_item_color_clicked">#39dbac</color>
-    <color name="song_item_text_color">#FFFFFF</color>
-
-    <color name="bottom_nav_false">#b7e6e9</color>
-    <color name="bottom_nav_true">#fbc192</color>
-
-    <color name="main_activity_ic_song_list_color">#caa37a</color>
-    <color name="main_activity_ic_next_color">#caa37a</color>
+    <color name="green">#39dbac</color>
 
 
-    <color name="grey">#617D8A</color>
-    <color name="grey_1">#263238</color>
-    <color name="bg_color">#212832</color>
-    <color name="grey_3">#455a64</color>
-    <color name="yellow">#fed36a</color>
+    <color name="text_primary_color">#FFFFFFFF</color>
 
-    <color name="purple_200">#ffbb86fc</color>
-    <color name="primary">#f52c56</color>
-    <color name="accent">#f52c56</color>
-    <color name="teal_200">#ff03dac5</color>
-    <color name="teal_700">#ff018786</color>
+    <color name="icon_color">#caa37a</color>
 
-    <color name="g_black">#33405f</color>
-
-    <color name="md_white_1000">#ffffff</color>
-
+    <color name="unselected_color">#ffffff</color>
 </resources>

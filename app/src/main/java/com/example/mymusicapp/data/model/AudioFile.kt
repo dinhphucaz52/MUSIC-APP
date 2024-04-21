@@ -12,7 +12,7 @@ data class AudioFile(
     private val title: String,
     private val path: String,
     private val contentUri: Uri?,
-    private val thumbnail: Bitmap
+    private val thumbnail: Bitmap?
 ) {
     constructor() : this(
         -1,

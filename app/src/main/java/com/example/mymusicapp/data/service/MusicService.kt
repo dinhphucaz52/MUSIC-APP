@@ -1,30 +1,29 @@
 package com.example.mymusicapp.data.service
 
-import android.app.Service
 import android.content.Intent
-import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
-import com.example.mymusicapp.R
+import androidx.media3.session.MediaLibraryService
+import androidx.media3.session.MediaSession
 import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
 import com.example.mymusicapp.util.NotificationFactory
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
 
+@UnstableApi
+class MusicService : MediaLibraryService() {
 
-class MusicService : Service() {
-
-
-    private val mainMVVM by lazy {
-        MainViewModel.getInstance()
-    }
-    private lateinit var exoPlayer: ExoPlayer
-
-    private val notificationManagerCompat: NotificationManagerCompat by lazy {
-        NotificationManagerCompat.from(this@MusicService)
-    }
+    private lateinit var player: ExoPlayer
+    private lateinit var mainMVVM: MainViewModel
+    private lateinit var session: MediaLibrarySession
+    private lateinit var notificationManager: NotificationManagerCompat
     private val binder = MyBinder()
 
     inner class MyBinder : Binder() {
@@ -33,52 +32,57 @@ class MusicService : Service() {
         }
     }
 
-    override fun onCreate() {
-        println("service: onCreate")
-        notificationManagerCompat.createNotificationChannel(NotificationFactory.createNotificationChannel())
-
-        exoPlayer = ExoPlayer.Builder(this).build()
-        exoPlayer.apply {
-            playWhenReady = true
-        }
-        mainMVVM.observeSongList().observeForever { songList ->
-            songList.forEach {
-                if (it.getContentUri() != null) {
-                    exoPlayer.addMediaItem(MediaItem.fromUri(it.getContentUri()!!))
-                }
-            }
-            exoPlayer.prepare()
-            exoPlayer.play()
-        }
-        mainMVVM.observePosition().observeForever { position ->
-            exoPlayer.seekTo(position, 0)
-            exoPlayer.prepare()
-            exoPlayer.play()
-        }
-        super.onCreate()
-    }
-
-
     override fun onBind(intent: Intent?): IBinder {
-        println("service: onBind")
+        super.onBind(intent)
         return binder
     }
 
+    override fun onCreate() {
+        super.onCreate()
+
+        mainMVVM = MainViewModel.getInstance()
+
+        player = ExoPlayer.Builder(this).setRenderersFactory(
+            DefaultRenderersFactory(this).setExtensionRendererMode(
+                DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER
+            )
+        ).build()
+
+        session = MediaLibrarySession.Builder(this, player, object : MediaLibrarySession.Callback {
+            override fun onAddMediaItems(
+                mediaSession: MediaSession,
+                controller: MediaSession.ControllerInfo,
+                mediaItems: MutableList<MediaItem>
+            ): ListenableFuture<MutableList<MediaItem>> {
+                val updatedMediaItems =
+                    mediaItems.map { it.buildUpon().setUri(it.mediaId).build() }.toMutableList()
+                return Futures.immediateFuture(updatedMediaItems)
+            }
+        }).build()
+
+        notificationManager = NotificationManagerCompat.from(this)
+        notificationManager.createNotificationChannel(NotificationFactory.createNotificationChannel())
+
+        mainMVVM.observeAudioFileList().observeForever { list ->
+            list.forEach {
+                if (it.getContentUri() != null) loadMediaItem(it.getContentUri()!!)
+            }
+        }
+    }
+
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession =
+        session
+
+    private fun loadMediaItem(uri: Uri) {
+        player.addMediaItem(MediaItem.fromUri(uri))
+        player.prepare()
+        player.play()
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        super.onStartCommand(intent, flags, startId)
-        println("service: onStartCommand")
         startForeground(
-            AppCommon.NOTIFICATION_ID, NotificationFactory.createNotification(
-                context = this,
-                duration = "05:00",
-                type = AppCommon.REQUEST_CODE_PAUSE,
-                songName = "NO SONG FOUND"
-//                bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_audio_file)
-            )
+            AppCommon.NOTIFICATION_ID, NotificationFactory.createNotification(this, session)
         )
-        return START_NOT_STICKY
+        return super.onStartCommand(intent, flags, startId)
     }
 }
-
-

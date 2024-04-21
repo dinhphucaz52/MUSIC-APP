@@ -40,7 +40,7 @@ class MainViewModel : ViewModel() {
     }
 
     //
-    fun observeSongList(): LiveData<ArrayList<AudioFile>> = songListLiveData
+    fun observeAudioFileList(): LiveData<ArrayList<AudioFile>> = songListLiveData
 
     fun observeSong(): LiveData<AudioFile?> = songLiveData
     fun observePosition(): LiveData<Int> = positionLiveData
@@ -61,8 +61,6 @@ class MainViewModel : ViewModel() {
         songLiveData.postValue(songList[position])
     }
 
-    fun getSongList() = songList
-
     fun setNextSong() {
         songLiveData.postValue(songList[++position])
         positionLiveData.postValue(position)
@@ -78,4 +76,12 @@ class MainViewModel : ViewModel() {
     }
 
     fun getDuration() = duration
+
+    fun getSong(): AudioFile {
+        return if (position == -1) {
+            AudioFile()
+        } else {
+            songList[position]
+        }
+    }
 }

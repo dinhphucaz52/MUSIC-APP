@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.media3.common.util.UnstableApi
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.mymusicapp.R
@@ -17,11 +18,8 @@ import com.example.mymusicapp.data.repository.MainRepository
 import com.example.mymusicapp.data.service.MusicService
 import com.example.mymusicapp.databinding.ActivityMainBinding
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
-
+@UnstableApi
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -58,9 +56,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun dataBinding() {
-//        mainMVVM.observeSong().observe(this@MainActivity) {
-//            binding.tvSongName.text = mainMVVM.getAudioFile()?.getTitle() ?: "NO SONGS FOUND"
-//        }
+        mainMVVM.observeSong().observe(this@MainActivity) {
+            binding.tvSongName.text = it?.getTitle()
+        }
     }
 
     private fun init() {
@@ -96,9 +94,7 @@ class MainActivity : AppCompatActivity() {
         ActivityCompat.requestPermissions(
             this@MainActivity, arrayOf(
                 Manifest.permission.READ_MEDIA_AUDIO,
-                Manifest.permission.FOREGROUND_SERVICE,
                 Manifest.permission.POST_NOTIFICATIONS,
-                Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK,
             ), AppCommon.REQUEST_CODE_PERMISSION
         )
     }

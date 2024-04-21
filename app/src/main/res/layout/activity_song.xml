@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/teal_700"
+    android:background="@color/green"
     tools:context=".presentation.activity.SongActivity">
 
     <ImageView
@@ -15,6 +14,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/item_ic_song"
         tools:ignore="ContentDescription" />
 
@@ -26,7 +26,7 @@
         android:layout_alignStart="@+id/imageView"
         android:fontFamily="@font/utm_bebas"
         android:text="NO SONG FOUND"
-        android:textColor="@color/white"
+        android:textColor="@color/icon_color"
         android:textSize="26sp"
         tools:ignore="HardcodedText" />
 
@@ -38,7 +38,7 @@
         android:layout_alignStart="@+id/imageView"
         android:fontFamily="@font/inter_semibold"
         android:text="03:50"
-        android:textColor="@color/white"
+        android:textColor="@color/icon_color"
         android:textSize="16sp"
         tools:ignore="HardcodedText" />
 

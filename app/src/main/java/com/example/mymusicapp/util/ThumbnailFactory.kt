@@ -7,24 +7,26 @@ import android.media.MediaMetadataRetriever
 import com.example.mymusicapp.R
 
 object ThumbnailFactory {
-     fun getMp3Thumbnail(filePath: String): Bitmap? {
+    fun getMp3Thumbnail(filePath: String): Bitmap {
+
+        val tempBitmap = BitmapFactory.decodeResource(
+            Resources.getSystem(), R.drawable.item_ic_song
+        )
+
         val retriever = MediaMetadataRetriever()
 
-        try {
+        return try {
             retriever.setDataSource(filePath)
             val embeddedThumbnail = retriever.embeddedPicture
 
-            return if (embeddedThumbnail != null) {
+            if (embeddedThumbnail != null) {
                 BitmapFactory.decodeByteArray(embeddedThumbnail, 0, embeddedThumbnail.size)
             } else {
-                BitmapFactory.decodeResource(
-                    Resources.getSystem(),
-                    R.drawable.item_ic_song
-                )
+                tempBitmap
             }
         } catch (e: Exception) {
             println("Error extracting thumbnail from MP3: ${e.message}")
-            return null
+            tempBitmap
         } finally {
             retriever.release()
         }

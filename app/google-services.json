@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "444968232957",
+    "firebase_url": "https://my-music-app-741ac-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "my-music-app-741ac",
+    "storage_bucket": "my-music-app-741ac.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:444968232957:android:3576040be8e6d3e9145b94",
+        "android_client_info": {
+          "package_name": "com.example.mymusicapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEPJptbh8on9CrBKoz54NaHA1ickbKmW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
