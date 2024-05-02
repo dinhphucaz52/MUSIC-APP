@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.media3.session.MediaController
 import com.example.mymusicapp.data.model.AudioFile
 import com.example.mymusicapp.data.repository.MainRepository
+import com.example.mymusicapp.util.MyFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -54,9 +55,10 @@ class MainViewModel : ViewModel() {
     fun filterSongs(newText: String) {
         val filteredList = ArrayList<AudioFile>()
         for (song in songList) {
-            if (song.getTitle().lowercase().contains(newText.lowercase())) {
+            val s = MyFactory.convert(song.getTitle().lowercase())
+            val t = MyFactory.convert(newText.lowercase())
+            if (s.contains(t))
                 filteredList.add(song)
-            }
         }
         songListLiveData.value = filteredList
     }

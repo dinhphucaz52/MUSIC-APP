@@ -43,7 +43,7 @@ class MainRepository(private val context: Context) {
                     val bitmap =
                         ThumbnailFactory.getMp3Thumbnail(data)
 
-                    audioFiles.add(AudioFile(id, title, data, contentUri, bitmap))
+                    audioFiles.add(AudioFile(id, title, data, contentUri, bitmap, audioFiles.size))
                 }
             }
             audioFiles
