@@ -8,6 +8,7 @@ import android.media.MediaMetadataRetriever
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +49,12 @@ class SongAdapter(
             this.songList = songList
             notifyDataSetChanged()
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun filterList(songList : ArrayList<AudioFile>) {
+        this.songList = songList
+        notifyDataSetChanged()
     }
 }
 

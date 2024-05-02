@@ -4,7 +4,7 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.mymusicapp.common.AppCommon
+import androidx.media3.session.MediaController
 import com.example.mymusicapp.data.model.AudioFile
 import com.example.mymusicapp.data.repository.MainRepository
 import kotlinx.coroutines.CoroutineScope
@@ -27,61 +27,39 @@ class MainViewModel : ViewModel() {
     }
 
 
-    private var duration: Long = 0
-    private var position: Int = AppCommon.INVALID_VALUE
     private var songList = ArrayList<AudioFile>()
-    private val positionLiveData = MutableLiveData<Int>()
-    private val songLiveData = MutableLiveData<AudioFile?>()
     private val songListLiveData = MutableLiveData<ArrayList<AudioFile>>()
 
-    //
     fun setRepository(mainRepository: MainRepository) {
         this.mainRepository = mainRepository
+        loadData()
     }
 
-    //
     fun observeAudioFileList(): LiveData<ArrayList<AudioFile>> = songListLiveData
-
-    fun observeSong(): LiveData<AudioFile?> = songLiveData
-    fun observePosition(): LiveData<Int> = positionLiveData
-
-    fun loadData() {
+    private fun loadData() {
         CoroutineScope(Dispatchers.IO).launch {
             songList = mainRepository.getAllAudioFiles()
-            println("MainViewModel $songList")
             songListLiveData.postValue(songList)
         }
     }
 
 
-    //
-    fun setSong(position: Int) {
-        this.position = position
-        positionLiveData.postValue(position)
-        songLiveData.postValue(songList[position])
+    private lateinit var controller: MediaController
+
+    fun setController(controller: MediaController) {
+        this.controller = controller
     }
 
-    fun setNextSong() {
-        songLiveData.postValue(songList[++position])
-        positionLiveData.postValue(position)
-    }
-
-    fun setPreviousSong() {
-        songLiveData.postValue(songList[--position])
-        positionLiveData.postValue(position)
-    }
-
-    fun setDuration(duration: Long) {
-        this.duration = duration
-    }
-
-    fun getDuration() = duration
-
-    fun getSong(): AudioFile {
-        return if (position == -1) {
-            AudioFile()
-        } else {
-            songList[position]
+    fun getController() = controller
+    fun filterSongs(newText: String) {
+        val filteredList = ArrayList<AudioFile>()
+        for (song in songList) {
+            if (song.getTitle().lowercase().contains(newText.lowercase())) {
+                filteredList.add(song)
+            }
         }
+        songListLiveData.value = filteredList
     }
+
+
 }

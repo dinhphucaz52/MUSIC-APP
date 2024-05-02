@@ -6,7 +6,9 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+
 
     <application
         android:allowBackup="true"
@@ -33,7 +35,7 @@
         <service
             android:name=".data.service.MusicService"
             android:enabled="true"
-            android:exported="true"
+            android:exported="false"
             android:foregroundServiceType="mediaPlayback">
 
             <intent-filter>

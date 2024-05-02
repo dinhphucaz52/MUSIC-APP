@@ -7,10 +7,15 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.navigation.findNavController
+import androidx.media3.session.MediaController
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.mymusicapp.R
 import com.example.mymusicapp.common.AppCommon
@@ -18,14 +23,16 @@ import com.example.mymusicapp.data.repository.MainRepository
 import com.example.mymusicapp.data.service.MusicService
 import com.example.mymusicapp.databinding.ActivityMainBinding
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
+import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 
 @UnstableApi
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val navController by lazy {
-        findNavController(R.id.mainView)
-    }
+    private lateinit var navController: NavController
+    private lateinit var controllerFuture: ListenableFuture<MediaController>
+    private lateinit var controller: MediaController
 
 
     private var isBound = false
@@ -35,6 +42,21 @@ class MainActivity : AppCompatActivity() {
             val binder = service as MusicService.MyBinder
             myMusicService = binder.getService()
             isBound = true
+
+            mainMVVM.observeAudioFileList().observe(this@MainActivity) {
+                myMusicService?.loadData(it)
+            }
+            val sessionToken = myMusicService!!.getSession().token
+            controllerFuture = MediaController.Builder(this@MainActivity, sessionToken).buildAsync()
+            controllerFuture.addListener(
+                {
+                    controller = controllerFuture.get()
+                    mainMVVM.setController(controller)
+                    initController()
+                },
+                MoreExecutors.directExecutor()
+            )
+            setData()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -42,13 +64,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun setData() {
+        binding.apply {
+            tvSongName.text = controller.mediaMetadata.title
+        }
+    }
+
     private val mainMVVM = MainViewModel.getInstance()
     private lateinit var mainRepository: MainRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        println("main: onCreate")
         super.onCreate(savedInstanceState)
-
         init()
         startMusicService()
         setEvents()
@@ -56,31 +83,55 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun dataBinding() {
-        mainMVVM.observeSong().observe(this@MainActivity) {
-            binding.tvSongName.text = it?.getTitle()
-        }
     }
 
     private fun init() {
+        requestPermission()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
+
+        navController =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment)!!.findNavController()
         binding.bottomNav.setupWithNavController(navController)
-        requestPermission()
+
         mainRepository = MainRepository(this@MainActivity)
         mainMVVM.setRepository(mainRepository)
-        mainMVVM.loadData()
+    }
+
+    private fun initController() {
+        controller.playWhenReady = true
+        controller.addListener(object : Player.Listener {
+
+            override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+                super.onMediaMetadataChanged(mediaMetadata)
+                myMusicService?.updateNotification()
+                setData()
+            }
+
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                super.onIsPlayingChanged(isPlaying)
+            }
+
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
+            }
+        })
     }
 
     private fun setEvents() {
-        binding.tvSongName.setOnClickListener {
-            val intent = Intent(this@MainActivity, SongActivity::class.java)
-            startActivity(intent)
-        }
-    }
+        binding.apply {
+            tvSongName.setOnClickListener {
+                val intent = Intent(this@MainActivity, SongActivity::class.java)
+                startActivity(intent)
+            }
+            btnNextSong.setOnClickListener {
+                controller.seekToNext()
+                controller.play()
+            }
 
-    override fun onResume() {
-        println("main: onResume")
-        super.onResume()
+        }
     }
 
     private fun startMusicService() {
@@ -95,6 +146,7 @@ class MainActivity : AppCompatActivity() {
             this@MainActivity, arrayOf(
                 Manifest.permission.READ_MEDIA_AUDIO,
                 Manifest.permission.POST_NOTIFICATIONS,
+                Manifest.permission.RECORD_AUDIO
             ), AppCommon.REQUEST_CODE_PERMISSION
         )
     }

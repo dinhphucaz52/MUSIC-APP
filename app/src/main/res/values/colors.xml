@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary_color">#1e1e2a</color>
-    <color name="secondary_color">#2b2b37</color>
+    <color name="primary_color">#2e333a</color>
+    <color name="secondary_color">#C56B8D</color>
 
     <color name="green">#39dbac</color>
 
 
     <color name="text_primary_color">#FFFFFFFF</color>
 
-    <color name="icon_color">#caa37a</color>
+    <color name="icon_color">#ffffff</color>
 
     <color name="unselected_color">#ffffff</color>
+    <color name="selected_color">#F44336</color>
 </resources>

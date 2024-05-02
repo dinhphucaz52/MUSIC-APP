@@ -19,7 +19,7 @@ data class AudioFile(
         "NO SONG FOUND",
         "null",
         null,
-        BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.ic_audio_file)
+        BitmapFactory.decodeResource(Resources.getSystem(), R.drawable.library)
     )
 
     fun getTitle() = title

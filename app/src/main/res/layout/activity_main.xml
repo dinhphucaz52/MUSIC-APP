@@ -1,48 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/songView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="30dp"
     android:background="@color/primary_color"
-    android:orientation="vertical"
-    android:padding="10dp"
-    android:weightSum="10"
     tools:context=".presentation.activity.MainActivity">
 
     <TextView
+        android:id="@+id/app_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/utm_bebas"
-        android:gravity="center_horizontal"
         android:text="@string/app_name"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        android:textStyle="bold"
         android:textColor="@color/text_primary_color"
-        android:textSize="40sp" />
-
-    <fragment
-        android:id="@+id/mainView"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:layout_weight="9"
-        app:navGraph="@navigation/nav_graph" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:layout_marginBottom="10dp"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/song_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_name">
+
+        <fragment
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph" />
+
+
+    </LinearLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/song_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav">
 
         <ImageView
             android:id="@+id/test"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/main_activity_ic_song_list" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/library"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_song_name"
@@ -51,30 +69,41 @@
             android:layout_weight="1"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"
+            android:maxLines="1"
             android:paddingRight="10dp"
             android:text="@string/no_song_found"
             android:textColor="@color/text_primary_color"
             android:textSize="26sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_next_song"
+            app:layout_constraintStart_toEndOf="@+id/test"
+            app:layout_constraintTop_toTopOf="parent"
             tools:ignore="NestedWeights" />
 
         <ImageView
             android:id="@+id/btn_next_song"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:src="@drawable/song_layout_ic_next" />
+            android:src="@drawable/skip_fwd"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNav"
+        android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:background="@color/primary_color"
         android:padding="3dp"
         app:itemIconTint="@drawable/bottom_navigation_item_color"
         app:itemTextColor="@drawable/bottom_navigation_item_color"
         app:menu="@menu/bottom_nav" />
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

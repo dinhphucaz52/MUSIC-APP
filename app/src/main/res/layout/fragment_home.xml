@@ -1,15 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/primary_color"
-    android:padding="7dp"
+    android:orientation="vertical"
     tools:context=".presentation.fragment.HomeFragment">
 
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:queryHint="Search ..."
+        app:iconifiedByDefault="false"
+        android:background="@drawable/edit_text_bg" />
+
+    <!--    <EditText-->
+    <!--        android:id="@+id/searchEditText"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="50dp"-->
+    <!--        android:background="@drawable/edit_text_bg"-->
+    <!--        android:drawableStart="@drawable/settings"-->
+    <!--        android:drawableEnd="@drawable/search"-->
+    <!--        android:drawablePadding="10dp"-->
+    <!--        android:ems="25"-->
+    <!--        android:hint="Search"-->
+    <!--        android:importantForAutofill="no"-->
+    <!--        android:maxLines="1"-->
+    <!--        android:padding="10dp"-->
+    <!--        android:textColor="@color/text_primary_color"-->
+    <!--        android:textColorHint="@color/text_primary_color"-->
+    <!--        tools:ignore="HardcodedText,LabelFor,TextFields" />-->
+
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
         android:id="@+id/songRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:listitem="@layout/item_music" />
-</FrameLayout>
+</LinearLayout>

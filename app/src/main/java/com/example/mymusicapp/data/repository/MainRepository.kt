@@ -2,11 +2,8 @@ package com.example.mymusicapp.data.repository
 
 import android.content.ContentUris
 import android.content.Context
-import android.content.res.Resources
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.MediaStore
-import com.example.mymusicapp.R
 import com.example.mymusicapp.data.model.AudioFile
 import com.example.mymusicapp.util.ThumbnailFactory
 import kotlinx.coroutines.Dispatchers
@@ -44,9 +41,7 @@ class MainRepository(private val context: Context) {
                     )
 
                     val bitmap =
-                        ThumbnailFactory.getMp3Thumbnail(data) ?: BitmapFactory.decodeResource(
-                            Resources.getSystem(), R.drawable.ic_audio_file
-                        )
+                        ThumbnailFactory.getMp3Thumbnail(data)
 
                     audioFiles.add(AudioFile(id, title, data, contentUri, bitmap))
                 }

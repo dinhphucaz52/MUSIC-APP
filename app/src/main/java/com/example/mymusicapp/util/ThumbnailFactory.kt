@@ -10,7 +10,7 @@ object ThumbnailFactory {
     fun getMp3Thumbnail(filePath: String): Bitmap {
 
         val tempBitmap = BitmapFactory.decodeResource(
-            Resources.getSystem(), R.drawable.item_ic_song
+            Resources.getSystem(), R.drawable.music_folder_song_solid
         )
 
         val retriever = MediaMetadataRetriever()
