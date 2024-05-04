@@ -1,6 +1,8 @@
 package com.example.mymusicapp.presentation.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Handler
 import android.widget.SeekBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,11 +14,15 @@ import com.example.mymusicapp.databinding.ActivitySongBinding
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
 
 
+@Suppress("DEPRECATION")
 class SongActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySongBinding
     private val mainMVVM = MainViewModel.getInstance()
     private val controller = mainMVVM.getController()
+    private val handler by lazy {
+        Handler()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,52 +30,56 @@ class SongActivity : AppCompatActivity() {
         init()
         setEvents()
 
+        this@SongActivity.runOnUiThread(object : Runnable {
+            override fun run() {
+                binding.seekbar.progress = controller.currentPosition.toInt()
+                handler.postDelayed(this, 1000)
+            }
+        })
+
     }
 
-
-    private fun loadDataFromMediaMetadata() {
-        binding.apply {
-            tvSongName.text = controller.mediaMetadata.title
-            artistName.text = controller.mediaMetadata.artist ?: "Unknown Artist"
-            seekBar.max = controller.duration.toInt()
-            seekBar.progress = 0
-            if (!isDestroyed)
-                Glide.with(this@SongActivity)
-                    .load(controller.mediaMetadata.artworkData)
-                    .centerCrop()
-                    .into(songImage)
-            playButton.setImageResource(if (controller.isPlaying) R.drawable.pause else R.drawable.play)
-            shuffleButton.setImageResource(if (controller.repeatMode == Player.REPEAT_MODE_ONE) R.drawable.repeat_one else R.drawable.shuffle)
-        }
+    override fun onResume() {
+        super.onResume()
+        loadDataFromMediaMetadata()
     }
 
     private fun setEvents() {
         binding.apply {
+
             nextButton.setOnClickListener {
                 controller.seekToNext()
                 controller.play()
             }
+
             previousButton.setOnClickListener {
                 controller.seekToPrevious()
                 controller.play()
             }
+
             playButton.setOnClickListener {
                 if (controller.isPlaying)
                     controller.pause()
                 else
                     controller.play()
             }
+
             shuffleButton.setOnClickListener {
-                if (controller.repeatMode == Player.REPEAT_MODE_ONE) {
-                    controller.repeatMode = Player.REPEAT_MODE_ALL
-                    controller.shuffleModeEnabled = true
-                } else {
-                    controller.repeatMode = Player.REPEAT_MODE_ONE
+                if (controller.shuffleModeEnabled) {
                     controller.shuffleModeEnabled = false
+                    controller.repeatMode = Player.REPEAT_MODE_ALL
+                } else {
+                    if (controller.repeatMode == Player.REPEAT_MODE_ALL) {
+                        controller.repeatMode = Player.REPEAT_MODE_ONE
+                    } else {
+                        controller.repeatMode = Player.REPEAT_MODE_ALL
+                        controller.shuffleModeEnabled = true
+                    }
                 }
-                shuffleButton.setImageResource(if (controller.repeatMode == Player.REPEAT_MODE_ONE) R.drawable.repeat_one else R.drawable.shuffle)
+                updateShuffleButton()
             }
-            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+
+            seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
                     seekBar: SeekBar?,
                     progress: Int,
@@ -84,26 +94,24 @@ class SongActivity : AppCompatActivity() {
                 override fun onStopTrackingTouch(seekBar: SeekBar?) {
                     if (seekBar != null) {
                         controller.seekTo(seekBar.progress.toLong())
+                        controller.play()
                     }
                 }
             }
             )
+
             backButton.setOnClickListener {
                 finish()
             }
-        }
-    }
 
-    override fun onResume() {
-        super.onResume()
-        loadDataFromMediaMetadata()
+        }
     }
 
     private fun init() {
         binding = ActivitySongBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         enableEdgeToEdge()
-        val controller = mainMVVM.getController()
         controller.addListener(object : Player.Listener {
             override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                 super.onMediaMetadataChanged(mediaMetadata)
@@ -111,11 +119,47 @@ class SongActivity : AppCompatActivity() {
                     loadDataFromMediaMetadata()
                 }
             }
-
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 super.onIsPlayingChanged(isPlaying)
-                binding.playButton.setImageResource(if (isPlaying) R.drawable.pause else R.drawable.play)
+                updatePlayButton()
             }
         })
     }
+
+    @SuppressLint("Recycle")
+    private fun loadDataFromMediaMetadata() {
+        binding.apply {
+            tvSongName.apply {
+                text = controller.mediaMetadata.title
+                println("SongActivity: ${controller.mediaMetadata.title}")
+//                val animator = AnimatorFactory.runningAnimation(tvSongName)
+//                animator.start()
+            }
+            artistName.text = controller.mediaMetadata.artist ?: "Unknown Artist"
+            seekbar.max = controller.duration.toInt()
+            seekbar.progress = controller.currentPosition.toInt()
+            if (!isDestroyed) Glide.with(this@SongActivity)
+                .load(controller.mediaMetadata.artworkData).centerCrop().into(songImage)
+            updatePlayButton()
+            updateShuffleButton()
+        }
+    }
+
+    private fun updatePlayButton() {
+        binding.playButton.setImageResource(
+            if (controller.isPlaying) R.drawable.pause
+            else R.drawable.play
+        )
+    }
+
+    private fun updateShuffleButton() {
+        binding.shuffleButton.setImageResource(
+            if (controller.shuffleModeEnabled) R.drawable.shuffle
+            else when (controller.repeatMode) {
+                Player.REPEAT_MODE_ALL -> R.drawable.repeat
+                else -> R.drawable.repeat_one
+            }
+        )
+    }
+
 }

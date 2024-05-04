@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymusicapp.data.model.AudioFile
 import com.example.mymusicapp.databinding.ItemMusicBinding
+import java.util.logging.Filter
 
 
 class SongAdapter(
@@ -40,12 +41,6 @@ class SongAdapter(
             this.songList = songList
             notifyDataSetChanged()
         }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun filterList(songList : ArrayList<AudioFile>) {
-        this.songList = songList
-        notifyDataSetChanged()
     }
 }
 

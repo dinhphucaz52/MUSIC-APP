@@ -48,20 +48,27 @@ class MainViewModel : ViewModel() {
     private lateinit var controller: MediaController
 
     fun setController(controller: MediaController) {
+        println("MainViewModel : controller is connected")
         this.controller = controller
     }
 
     fun getController() = controller
     fun filterSongs(newText: String) {
-        val filteredList = ArrayList<AudioFile>()
-        for (song in songList) {
-            val s = MyFactory.convert(song.getTitle().lowercase())
-            val t = MyFactory.convert(newText.lowercase())
-            if (s.contains(t))
-                filteredList.add(song)
+        CoroutineScope(Dispatchers.IO).launch {
+            val filteredList = ArrayList<AudioFile>()
+            for (song in songList) {
+                val s = MyFactory.convert(song.getTitle().lowercase())
+                val t = MyFactory.convert(newText.lowercase())
+                if (s.contains(t))
+                    filteredList.add(song)
+            }
+            songListLiveData.postValue(filteredList)
         }
-        songListLiveData.value = filteredList
     }
 
-
+    private val songNameLiveData = MutableLiveData("NO SONG FOUND")
+    fun observeSongName(): LiveData<String> = songNameLiveData
+    fun setSongName(songName: String) {
+        songNameLiveData.postValue(songName)
+    }
 }

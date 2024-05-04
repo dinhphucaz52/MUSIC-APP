@@ -14,4 +14,9 @@
         android:name="com.example.mymusicapp.presentation.fragment.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/userFragment"
+        android:name="com.example.mymusicapp.presentation.fragment.UserFragment"
+        android:label="fragment_user"
+        tools:layout="@layout/fragment_user" />
 </navigation>

@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary_color">#2e333a</color>
-    <color name="secondary_color">#C56B8D</color>
+    <color name="secondary_color">#F4BFD3</color>
 
+    <color name="yellow">#f7e700</color>
     <color name="green">#39dbac</color>
-
+    <color name="white">#ffffff</color>
+    <color name="black">#010101</color>
 
     <color name="text_primary_color">#FFFFFFFF</color>
 
-    <color name="icon_color">#ffffff</color>
+    <color name="icon_color">#909295</color>
 
-    <color name="unselected_color">#ffffff</color>
-    <color name="selected_color">#F44336</color>
+    <color name="unselected_color">#909295</color>
+    <color name="selected_color">#FFFFFF</color>
 </resources>

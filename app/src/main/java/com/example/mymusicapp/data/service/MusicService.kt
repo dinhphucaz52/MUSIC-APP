@@ -36,7 +36,7 @@ class MusicService : MediaLibraryService() {
         player = ExoPlayer.Builder(this).build()
         player.playWhenReady = true
         player.apply {
-            repeatMode = ExoPlayer.REPEAT_MODE_ONE
+            repeatMode = ExoPlayer.REPEAT_MODE_ALL
         }
 
         session = MediaLibrarySession.Builder(this, player, object : MediaLibrarySession.Callback {

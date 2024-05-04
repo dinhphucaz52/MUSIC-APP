@@ -4,11 +4,11 @@
     <selectionStates>
       <SelectionState runConfigName="Music App">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-05-01T22:35:55.857820300Z">
+        <DropdownSelection timestamp="2024-05-04T08:24:09.765010100Z">
           <Target type="DEFAULT_BOOT">
-            <template>
-              <DeviceId pluginId="FirebaseDirectAccess" type="TEMPLATE" identifier="model_id=q5q/34" />
-            </template>
+            <handle>
+              <DeviceId pluginId="Default" identifier="serial=192.168.1.206:5555;connection=dbc72727" />
+            </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />

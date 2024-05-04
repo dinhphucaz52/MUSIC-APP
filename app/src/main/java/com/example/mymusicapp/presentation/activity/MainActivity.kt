@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.enableEdgeToEdge
@@ -56,18 +57,10 @@ class MainActivity : AppCompatActivity() {
                 },
                 MoreExecutors.directExecutor()
             )
-            setData()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
-        }
-    }
-
-
-    private fun setData() {
-        binding.apply {
-            tvSongName.text = controller.mediaMetadata.title
         }
     }
 
@@ -78,11 +71,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         init()
         startMusicService()
-        setEvents()
-        dataBinding()
-    }
-
-    private fun dataBinding() {
     }
 
     private fun init() {
@@ -103,35 +91,14 @@ class MainActivity : AppCompatActivity() {
     private fun initController() {
         controller.playWhenReady = true
         controller.addListener(object : Player.Listener {
-
             override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
                 super.onMediaMetadataChanged(mediaMetadata)
                 myMusicService?.updateNotification()
-                setData()
-            }
-
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                super.onIsPlayingChanged(isPlaying)
-            }
-
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                super.onPlaybackStateChanged(playbackState)
+                if (mediaMetadata.title != null) {
+                    mainMVVM.setSongName(mediaMetadata.title.toString())
+                }
             }
         })
-    }
-
-    private fun setEvents() {
-        binding.apply {
-            tvSongName.setOnClickListener {
-                val intent = Intent(this@MainActivity, SongActivity::class.java)
-                startActivity(intent)
-            }
-            btnNextSong.setOnClickListener {
-                controller.seekToNext()
-                controller.play()
-            }
-
-        }
     }
 
     private fun startMusicService() {
@@ -142,12 +109,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestPermission() {
-        ActivityCompat.requestPermissions(
-            this@MainActivity, arrayOf(
-                Manifest.permission.READ_MEDIA_AUDIO,
-                Manifest.permission.POST_NOTIFICATIONS,
-                Manifest.permission.RECORD_AUDIO
-            ), AppCommon.REQUEST_CODE_PERMISSION
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(
+                this@MainActivity, arrayOf(
+                    Manifest.permission.READ_MEDIA_AUDIO,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                    Manifest.permission.RECORD_AUDIO
+                ), AppCommon.REQUEST_CODE_PERMISSION
+            )
+        }
     }
 }

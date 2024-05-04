@@ -11,7 +11,6 @@ import kotlinx.coroutines.withContext
 
 class MainRepository(private val context: Context) {
 
-
     suspend fun getAllAudioFiles(): ArrayList<AudioFile> {
         return withContext(Dispatchers.IO) {
             val audioFiles = arrayListOf<AudioFile>()
@@ -40,14 +39,14 @@ class MainRepository(private val context: Context) {
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id
                     )
 
-                    val bitmap =
-                        ThumbnailFactory.getMp3Thumbnail(data)
-
+                    val bitmap = ThumbnailFactory.getMp3Thumbnail(data)
                     audioFiles.add(AudioFile(id, title, data, contentUri, bitmap, audioFiles.size))
                 }
             }
             audioFiles
         }
     }
+
+
 
 }

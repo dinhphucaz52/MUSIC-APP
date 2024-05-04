@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.mymusicapp"
-        minSdk = 34
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -65,4 +65,5 @@ dependencies {
     //Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("io.github.gautamchibde:audiovisualizer:2.2.5")
+
 }
