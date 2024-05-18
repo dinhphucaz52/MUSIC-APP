@@ -1,6 +1,6 @@
-package com.example.mymusicapp.util
+package com.example.mymusicapp.helper
 
-object MyFactory {
+object StringHelper {
     fun convert(input: String): String {
         return input.replace(Regex("[àáạảãâầấậẩẫăằắặẳẵ]"), "a")
             .replace(Regex("[èéẹẻẽêềếệểễ]"), "e")

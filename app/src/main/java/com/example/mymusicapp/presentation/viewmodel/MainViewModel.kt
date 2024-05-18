@@ -7,16 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.media3.session.MediaController
 import com.example.mymusicapp.data.model.AudioFile
 import com.example.mymusicapp.data.repository.MainRepository
-import com.example.mymusicapp.util.MyFactory
+import com.example.mymusicapp.helper.StringHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
 class MainViewModel : ViewModel() {
-
     private lateinit var mainRepository: MainRepository
-
+    fun setRepository(mainRepository: MainRepository) {
+        this.mainRepository = mainRepository
+    }
     companion object {
         private lateinit var instance: MainViewModel
 
@@ -26,45 +27,32 @@ class MainViewModel : ViewModel() {
             return instance
         }
     }
-
-
     private var songList = ArrayList<AudioFile>()
     private val songListLiveData = MutableLiveData<ArrayList<AudioFile>>()
-
-    fun setRepository(mainRepository: MainRepository) {
-        this.mainRepository = mainRepository
-        loadData()
-    }
-
     fun observeAudioFileList(): LiveData<ArrayList<AudioFile>> = songListLiveData
-    private fun loadData() {
+    fun loadData() {
         CoroutineScope(Dispatchers.IO).launch {
             songList = mainRepository.getAllAudioFiles()
             songListLiveData.postValue(songList)
         }
     }
-
-
     private lateinit var controller: MediaController
-
     fun setController(controller: MediaController) {
         this.controller = controller
     }
-
     fun getController() = controller
     fun filterSongs(newText: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val filteredList = ArrayList<AudioFile>()
             for (song in songList) {
-                val s = MyFactory.convert(song.getTitle().lowercase())
-                val t = MyFactory.convert(newText.lowercase())
+                val s = StringHelper.convert(song.getTitle().lowercase())
+                val t = StringHelper.convert(newText.lowercase())
                 if (s.contains(t))
                     filteredList.add(song)
             }
             songListLiveData.postValue(filteredList)
         }
     }
-
     private val songNameLiveData = MutableLiveData("NO SONG FOUND")
     fun observeSongName(): LiveData<String> = songNameLiveData
     fun setSongName(songName: String) {

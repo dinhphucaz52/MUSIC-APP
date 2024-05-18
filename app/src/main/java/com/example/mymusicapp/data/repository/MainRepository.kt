@@ -5,7 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import com.example.mymusicapp.data.model.AudioFile
-import com.example.mymusicapp.util.ThumbnailFactory
+import com.example.mymusicapp.helper.BitmapHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -39,14 +39,11 @@ class MainRepository(private val context: Context) {
                         MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, id
                     )
 
-                    val bitmap = ThumbnailFactory.getMp3Thumbnail(data)
+                    val bitmap = BitmapHelper.getMp3Thumbnail(data)
                     audioFiles.add(AudioFile(id, title, data, contentUri, bitmap, audioFiles.size))
                 }
             }
             audioFiles
         }
     }
-
-
-
 }

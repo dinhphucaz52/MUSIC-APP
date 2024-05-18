@@ -12,7 +12,7 @@ import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.model.AudioFile
-import com.example.mymusicapp.util.NotificationFactory
+import com.example.mymusicapp.helper.NotificationHelper
 
 @UnstableApi
 class MusicService : MediaLibraryService() {
@@ -43,7 +43,7 @@ class MusicService : MediaLibraryService() {
         }).build()
 
         notificationManager = NotificationManagerCompat.from(this)
-        notificationManager.createNotificationChannel(NotificationFactory.createNotificationChannel())
+        notificationManager.createNotificationChannel(NotificationHelper.createNotificationChannel())
 
 
     }
@@ -79,7 +79,7 @@ class MusicService : MediaLibraryService() {
 
     fun updateNotification() {
         startForeground(
-            AppCommon.NOTIFICATION_ID, NotificationFactory.createNotification(this, session)
+            AppCommon.NOTIFICATION_ID, NotificationHelper.createNotification(this, session)
         )
     }
 

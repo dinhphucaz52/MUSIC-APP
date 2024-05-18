@@ -14,9 +14,7 @@
         android:layout_marginHorizontal="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:queryHint="Search ..."
-        android:background="@drawable/bg_search_view"
-        app:iconifiedByDefault="false" />
+        android:background="@drawable/bg_search_view" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_marginTop="10dp"

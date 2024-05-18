@@ -29,14 +29,8 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        player = ExoPlayer.Builder(requireContext()).build()
-
-        binding.playerView.player = player
-        binding.buttonSearch.setOnClickListener {
-            val url = "https://www.youtube.com/watch?v=L7qKu_SPV4o"
 
 
-        }
 
     }
 }

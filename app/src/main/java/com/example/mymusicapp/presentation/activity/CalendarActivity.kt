@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.databinding.ActivityCalendarBinding
 import com.example.mymusicapp.helper.LunarDayHelper
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class CalendarActivity : AppCompatActivity() {
 
@@ -36,7 +38,18 @@ class CalendarActivity : AppCompatActivity() {
         binding = ActivityCalendarBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
-        val lunarDay = LunarDayHelper.convertSolar2Lunar(13, 5, 2024, AppCommon.TIME_ZONE)
+
+        val current = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val currentDateTime = current.format(formatter).split("-")
+
+
+        val lunarDay = LunarDayHelper.convertSolar2Lunar(
+            currentDateTime[0].toInt(),
+            currentDateTime[1].toInt(),
+            currentDateTime[2].toInt(),
+            AppCommon.TIME_ZONE
+        )
         val result = "Day ${lunarDay[0]} Month ${lunarDay[1]} Year ${lunarDay[2]}"
 
         binding.textViewLunarDay.text = result

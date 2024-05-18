@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView.OnQueryTextListener
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mymusicapp.databinding.FragmentHomeBinding
@@ -51,17 +51,21 @@ class HomeFragment : Fragment() {
     private fun addEvents() {
         binding.apply {
             searchEditText.apply {
-                clearFocus()
-                setOnQueryTextListener(object: OnQueryTextListener {
+                setOnQueryTextFocusChangeListener { _, hasFocus ->
+                    if (hasFocus) {
+                        cardView.visibility = View.GONE
+                    } else {
+                        cardView.visibility = View.VISIBLE
+                    }
+                }
+                setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         return true
                     }
-
                     override fun onQueryTextChange(newText: String?): Boolean {
                         mainMVVM.filterSongs(newText ?: "")
                         return true
                     }
-
                 })
             }
             btnNextSong.setOnClickListener {

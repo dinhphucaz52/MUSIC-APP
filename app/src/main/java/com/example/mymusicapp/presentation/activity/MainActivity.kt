@@ -1,12 +1,11 @@
 package com.example.mymusicapp.presentation.activity
 
 import android.Manifest
-import android.R.attr.timeZone
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.icu.util.TimeZone
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -25,7 +24,6 @@ import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.repository.MainRepository
 import com.example.mymusicapp.data.service.MusicService
 import com.example.mymusicapp.databinding.ActivityMainBinding
-import com.example.mymusicapp.helper.LunarDayHelper
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
@@ -63,7 +61,6 @@ class MainActivity : AppCompatActivity() {
                 MoreExecutors.directExecutor()
             )
         }
-
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
         }
@@ -79,25 +76,26 @@ class MainActivity : AppCompatActivity() {
         setEvents()
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == AppCommon.REQUEST_CODE_PERMISSION && permissions[0] == Manifest.permission.READ_MEDIA_AUDIO) {
+            mainMVVM.loadData()
+        }
+    }
+
     private fun setEvents() {
         binding.apply {
             userButton.setOnClickListener {
                 startActivity(Intent(this@MainActivity, UserActivity::class.java))
             }
-
-            appName.setOnClickListener {
-                startActivity(Intent(this@MainActivity, UploadActivity::class.java))
-            }
-            imageView.setOnClickListener {
-//                println(LunarDayHelper.convertSolar2Lunar(13, 5, 2024, AppCommon.TIME_ZONE).toList())
-            }
         }
     }
 
-
     private fun init() {
-        requestPermission()
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
@@ -108,6 +106,11 @@ class MainActivity : AppCompatActivity() {
 
         mainRepository = MainRepository(this@MainActivity)
         mainMVVM.setRepository(mainRepository)
+        if (checkSelfPermission(Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            mainMVVM.loadData()
+        } else {
+            requestPermission()
+        }
     }
 
     private fun initController() {
@@ -136,7 +139,6 @@ class MainActivity : AppCompatActivity() {
                 this@MainActivity, arrayOf(
                     Manifest.permission.READ_MEDIA_AUDIO,
                     Manifest.permission.POST_NOTIFICATIONS,
-                    Manifest.permission.RECORD_AUDIO
                 ), AppCommon.REQUEST_CODE_PERMISSION
             )
         }

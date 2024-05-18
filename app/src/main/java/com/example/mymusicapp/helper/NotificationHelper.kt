@@ -1,4 +1,4 @@
-package com.example.mymusicapp.util
+package com.example.mymusicapp.helper
 
 import android.app.Notification
 import android.content.Context
@@ -11,7 +11,7 @@ import com.example.mymusicapp.R
 import com.example.mymusicapp.common.AppCommon
 
 @UnstableApi
-object NotificationFactory {
+object NotificationHelper {
 
     fun createNotificationChannel(): NotificationChannelCompat {
         return NotificationChannelCompat.Builder(

@@ -33,7 +33,7 @@ class SongAdapter(
                     .into(thumbnail)
             }
             root.setOnClickListener {
-                println("SongAdapter -> onBindViewHolder : ${song.getContentUri()}")
+                println("SongAdapter.onBindViewHolder : ${song.getContentUri()}")
                 listener.invoke(song.getPositionInSongList())
             }
         }
