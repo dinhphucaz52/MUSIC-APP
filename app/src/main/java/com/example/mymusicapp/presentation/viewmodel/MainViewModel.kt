@@ -1,12 +1,15 @@
 package com.example.mymusicapp.presentation.viewmodel
 
 import androidx.annotation.MainThread
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.media3.session.MediaController
-import com.example.mymusicapp.data.model.AudioFile
+import com.example.mymusicapp.data.model.PlayList
+import com.example.mymusicapp.data.model.SongFile
 import com.example.mymusicapp.data.repository.MainRepository
+import com.example.mymusicapp.data.repository.PlayListRepository
 import com.example.mymusicapp.helper.StringHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,8 +18,12 @@ import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
     private lateinit var mainRepository: MainRepository
+    private lateinit var playListRepository: PlayListRepository
     fun setRepository(mainRepository: MainRepository) {
         this.mainRepository = mainRepository
+    }
+    fun setPlayListRepository(playListRepository: PlayListRepository) {
+        this.playListRepository = playListRepository
     }
     companion object {
         private lateinit var instance: MainViewModel
@@ -27,9 +34,12 @@ class MainViewModel : ViewModel() {
             return instance
         }
     }
-    private var songList = ArrayList<AudioFile>()
-    private val songListLiveData = MutableLiveData<ArrayList<AudioFile>>()
-    fun observeAudioFileList(): LiveData<ArrayList<AudioFile>> = songListLiveData
+
+    fun getSongList() = songList
+
+    private var songList = ArrayList<SongFile>()
+    private val songListLiveData = MutableLiveData<ArrayList<SongFile>>()
+    fun observeAudioFileList(): LiveData<ArrayList<SongFile>> = songListLiveData
     fun loadData() {
         CoroutineScope(Dispatchers.IO).launch {
             songList = mainRepository.getAllAudioFiles()
@@ -43,7 +53,7 @@ class MainViewModel : ViewModel() {
     fun getController() = controller
     fun filterSongs(newText: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val filteredList = ArrayList<AudioFile>()
+            val filteredList = ArrayList<SongFile>()
             for (song in songList) {
                 val s = StringHelper.convert(song.getTitle().lowercase())
                 val t = StringHelper.convert(newText.lowercase())
@@ -58,4 +68,46 @@ class MainViewModel : ViewModel() {
     fun setSongName(songName: String) {
         songNameLiveData.postValue(songName)
     }
+
+    //PlayList
+    private val playListList = ArrayList<PlayList>()
+    private val playListListLiveData = MutableLiveData<ArrayList<PlayList>>()
+    fun observePlayListList(): LiveData<ArrayList<PlayList>> = playListListLiveData
+
+    fun loadPlayList() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val songList = playListRepository.getSongs()
+            val playList = playListRepository.getPlayLists()
+            val playListHashMap = hashMapOf<Int, PlayList>()
+            playList.forEach {
+                playListHashMap[it.id] = PlayList(it.name, mutableListOf())
+            }
+            songList.forEach {
+                playListHashMap[it.playListId]?.contentUriList?.add(it.contentURI.toUri())
+            }
+            playListList.clear()
+            playListHashMap.forEach {
+                playListList.add(it.value)
+            }
+            CoroutineScope(Dispatchers.Main).launch {
+                playListListLiveData.postValue(playListList)
+            }
+        }
+    }
+
+    private val playListItemLiveData = MutableLiveData<PlayList>()
+    fun observePlayListItem(): LiveData<PlayList> = playListItemLiveData
+    fun addPlayList(name: String) {
+        playListList.add(PlayList(name, mutableListOf()))
+        playListRepository.addPlayList(name)
+    }
+
+    private val playListPositionLiveData = MutableLiveData<Int>()
+    fun observePlayListPosition() = playListPositionLiveData
+
+    fun setPlayListPosition(position: Int) {
+        playListPositionLiveData.postValue(position)
+    }
+
+    fun getSongList(position: Int) = playListList[position]
 }

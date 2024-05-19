@@ -1,13 +1,12 @@
 package com.example.mymusicapp.presentation.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mymusicapp.data.model.ImageFile
 import com.example.mymusicapp.databinding.ItemImageBinding
-import com.example.mymusicapp.`interface`.ItemListener
+import com.example.mymusicapp.callback.ItemListener
 
 class ImageAdapter(
     private val context: Context,
@@ -30,7 +29,6 @@ class ImageAdapter(
     override fun getItemCount(): Int = images.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        println("ImageAdapter.onBindViewHolder: $position")
         if (images[position].bitmap != null)
             holder.binding.imageViewGallery.setImageBitmap(images[position].bitmap)
     }

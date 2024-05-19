@@ -11,7 +11,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import com.example.mymusicapp.common.AppCommon
-import com.example.mymusicapp.data.model.AudioFile
+import com.example.mymusicapp.data.model.SongFile
 import com.example.mymusicapp.helper.NotificationHelper
 
 @UnstableApi
@@ -66,7 +66,7 @@ class MusicService : MediaLibraryService() {
     fun getSession(): MediaLibrarySession = session
 
 
-    fun loadData(songList: ArrayList<AudioFile>?) {
+    fun loadData(songList: ArrayList<SongFile>?) {
         songList?.forEach {
             if (it.getContentUri() != null) loadMediaItem(it.getContentUri()!!)
         }

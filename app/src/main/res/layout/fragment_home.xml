@@ -49,7 +49,7 @@
                 android:paddingStart="20dp"
                 android:paddingEnd="10dp"
                 android:text="Play Now"
-                android:textColor="@color/black"
+                android:textColor="@color/text_primary_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:ignore="HardcodedText" />
@@ -58,11 +58,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/image"
+                android:src="@drawable/image1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/tv_song_name"
@@ -71,7 +73,7 @@
                 android:layout_marginEnd="36dp"
                 android:maxLines="2"
                 android:text="No song found"
-                android:textColor="@color/text_primary_color"
+                android:textColor="@color/primary_color"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/btn_next_song"

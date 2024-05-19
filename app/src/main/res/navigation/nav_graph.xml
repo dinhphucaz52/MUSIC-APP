@@ -11,7 +11,7 @@
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.mymusicapp.presentation.fragment.SearchFragment"
+        android:name="com.example.mymusicapp.presentation.fragment.PlayListFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_play_list" />
 </navigation>

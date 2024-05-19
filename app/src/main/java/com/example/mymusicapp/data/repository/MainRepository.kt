@@ -4,16 +4,16 @@ import android.content.ContentUris
 import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
-import com.example.mymusicapp.data.model.AudioFile
+import com.example.mymusicapp.data.model.SongFile
 import com.example.mymusicapp.helper.BitmapHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class MainRepository(private val context: Context) {
 
-    suspend fun getAllAudioFiles(): ArrayList<AudioFile> {
+    suspend fun getAllAudioFiles(): ArrayList<SongFile> {
         return withContext(Dispatchers.IO) {
-            val audioFiles = arrayListOf<AudioFile>()
+            val songFiles = arrayListOf<SongFile>()
 
             val uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
@@ -40,10 +40,10 @@ class MainRepository(private val context: Context) {
                     )
 
                     val bitmap = BitmapHelper.getMp3Thumbnail(data)
-                    audioFiles.add(AudioFile(id, title, data, contentUri, bitmap, audioFiles.size))
+                    songFiles.add(SongFile(id, title, data, contentUri, bitmap, songFiles.size))
                 }
             }
-            audioFiles
+            songFiles
         }
     }
 }

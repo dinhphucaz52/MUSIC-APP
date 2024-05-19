@@ -18,11 +18,11 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val mainMVVM = MainViewModel.getInstance()
 
-    private var songAdapter = SongAdapter { position ->
-        mainMVVM.getController().seekTo(position, 0)
+    private val songAdapter by lazy {
+        SongAdapter(requireContext()) { position ->
+            mainMVVM.getController().seekTo(position, 0)
+        }
     }
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -84,7 +84,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun prepareRecyclerViews() {
-        songAdapter.setContext(requireContext())
         binding.songRecyclerView.apply {
             layoutManager =
                 LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)

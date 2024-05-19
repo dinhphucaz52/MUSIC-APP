@@ -4,10 +4,8 @@
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
@@ -20,6 +18,12 @@
         android:roundIcon="@drawable/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMusicApp">
+        <activity
+            android:name=".presentation.activity.SelectSongActivity"
+            android:exported="false" />
+        <activity
+            android:name=".presentation.activity.PlayListActivity"
+            android:exported="false" />
         <activity
             android:name=".presentation.activity.CalendarActivity"
             android:exported="false" />

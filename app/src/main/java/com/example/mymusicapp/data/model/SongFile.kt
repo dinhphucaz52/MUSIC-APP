@@ -10,7 +10,7 @@ import androidx.media3.common.MediaMetadata
 import com.example.mymusicapp.R
 import com.example.mymusicapp.common.AppCommon
 
-data class AudioFile(
+data class SongFile(
     private val id: Long,
     private val title: String,
     private val path: String,
@@ -31,11 +31,4 @@ data class AudioFile(
     fun getContentUri() = contentUri
     fun getThumbnail() = thumbnail
     fun getPositionInSongList() = positionInSongList
-
-    fun getMediaMetadata(): MediaMetadata {
-        if (contentUri != null) {
-            return MediaItem.fromUri(contentUri).mediaMetadata
-        }
-        return MediaMetadata.Builder().build()
-    }
 }

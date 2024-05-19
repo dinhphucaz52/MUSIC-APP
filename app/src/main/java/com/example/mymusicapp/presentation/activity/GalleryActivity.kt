@@ -10,12 +10,12 @@ import android.provider.MediaStore
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.mymusicapp.callback.ItemListener
 import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.model.ImageFile
 import com.example.mymusicapp.data.repository.GalleryRepository
 import com.example.mymusicapp.databinding.ActivityGalleryBinding
 import com.example.mymusicapp.helper.BitmapHelper
-import com.example.mymusicapp.`interface`.ItemListener
 import com.example.mymusicapp.presentation.adapter.ImageAdapter
 import com.example.mymusicapp.presentation.viewmodel.GalleryViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -118,6 +118,6 @@ class GalleryActivity : AppCompatActivity(), ItemListener {
     }
 
     override fun onItemClicked(position: Int) {
-        println("GalleryActivity.onItemClicked: $position")
+        println("GalleryActivity.onItemClicked.dateTaken: $position")
     }
 }
