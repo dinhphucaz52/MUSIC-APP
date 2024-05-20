@@ -6,18 +6,26 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.mymusicapp.callback.ItemListener
+import com.example.mymusicapp.data.model.PlayList
 import com.example.mymusicapp.data.model.SongFile
 import com.example.mymusicapp.databinding.ItemMusicBinding
 
 
 class SongAdapter(
     private val context: Context,
-    private val listener: (position: Int) -> Unit
+    private val listener: ItemListener
 ) : RecyclerView.Adapter<SongAdapter.ViewHolder>() {
 
     private var songList = ArrayList<SongFile>()
 
-    inner class ViewHolder(var binding: ItemMusicBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class ViewHolder(var binding: ItemMusicBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.root.setOnClickListener {
+                listener.onItemClicked(bindingAdapterPosition)
+            }
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
         ViewHolder(ItemMusicBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -31,9 +39,6 @@ class SongAdapter(
                     .load(song.getThumbnail())
                     .into(thumbnail)
             }
-            root.setOnClickListener {
-                listener.invoke(song.getPositionInSongList())
-            }
         }
     }
 
@@ -42,11 +47,9 @@ class SongAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(songList: ArrayList<SongFile>?) {
-        if (songList != null) {
-            this.songList = songList
-            notifyDataSetChanged()
-        }
+    fun updateData(songList: ArrayList<SongFile>) {
+        this.songList = songList
+        notifyDataSetChanged()
     }
 }
 

@@ -2,10 +2,11 @@ package com.example.mymusicapp.presentation.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mymusicapp.callback.ItemListener
+import com.example.mymusicapp.data.model.SongFile
 import com.example.mymusicapp.databinding.ActivityPlayListBinding
 import com.example.mymusicapp.presentation.adapter.SongAdapter
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
@@ -17,15 +18,12 @@ class PlayListActivity : AppCompatActivity() {
         MainViewModel.getInstance()
     }
     private val songAdapter by lazy {
-        SongAdapter(this@PlayListActivity) {
-            onItemClick(it)
-        }
+        SongAdapter(this@PlayListActivity, object : ItemListener {
+            override fun onItemClicked(position: Int) {
+                TODO("Play song in play list")
+            }
+        })
     }
-
-    private fun onItemClick(position: Int) {
-        Toast.makeText(this@PlayListActivity, "$position", Toast.LENGTH_SHORT).show()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         init()
@@ -54,12 +52,9 @@ class PlayListActivity : AppCompatActivity() {
     }
 
     private fun dataBinding() {
-        mainMVVM.observePlayListPosition().observe(this) { position ->
-            val songList = mainMVVM.getSongList(position)
-            binding.apply {
-                tvPlayListName.text = songList.name
-                songAdapter.updateData(mainMVVM.getSongList())
-            }
+        mainMVVM.observePlayList().observe(this) { position ->
+            val playList = mainMVVM.getPlayList(position)
+            songAdapter.updateData(playList.songs as ArrayList<SongFile>)
         }
     }
 

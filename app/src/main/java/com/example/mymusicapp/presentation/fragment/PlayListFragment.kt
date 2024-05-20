@@ -17,7 +17,7 @@ import com.example.mymusicapp.presentation.viewmodel.MainViewModel
 import com.example.mymusicapp.util.DialogCreatePlayList
 
 
-class PlayListFragment : Fragment(), DialogListener, ItemListener {
+class PlayListFragment : Fragment() {
 
     private lateinit var binding: FragmentPlayListBinding
     private lateinit var playListRepository: PlayListRepository
@@ -26,7 +26,14 @@ class PlayListFragment : Fragment(), DialogListener, ItemListener {
     }
 
     private val playListAdapter by lazy {
-        PlayListAdapter(requireContext(), this)
+        PlayListAdapter(requireContext(), object : ItemListener {
+            override fun onItemClicked(position: Int) {
+                println("PlayListFragment.onItemClicked: $position")
+                mainMVVM.setPlayList(position)
+                val intent = Intent(requireContext(), PlayListActivity::class.java)
+                startActivity(intent)
+            }
+        })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,16 +62,18 @@ class PlayListFragment : Fragment(), DialogListener, ItemListener {
     private fun setEvents() {
         binding.apply {
             fabAddPlaylist.setOnClickListener {
-                DialogCreatePlayList.create(requireContext(), this@PlayListFragment)
+                DialogCreatePlayList.create(requireContext(), object : DialogListener {
+                    override fun onDialogClicked(name: String) {
+                        if (name.isNotEmpty())
+                            mainMVVM.addPlayList(name)
+                    }
+                })
             }
         }
     }
 
     private fun dataBinding() {
         mainMVVM.apply {
-            observePlayListItem().observe(viewLifecycleOwner) {
-                playListAdapter.addPlayList(it)
-            }
             observePlayListList().observe(viewLifecycleOwner) {
                 playListAdapter.updateData(it)
             }
@@ -82,16 +91,5 @@ class PlayListFragment : Fragment(), DialogListener, ItemListener {
 
     private fun init() {
 
-    }
-
-    override fun onDialogClicked(name: String) {
-        if (name.isEmpty()) return
-        mainMVVM.addPlayList(name)
-    }
-
-    override fun onItemClicked(position: Int) {
-        mainMVVM.setPlayListPosition(position)
-        val intent = Intent(requireContext(), PlayListActivity::class.java)
-        startActivity(intent)
     }
 }

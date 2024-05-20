@@ -18,6 +18,18 @@
         android:roundIcon="@drawable/ic_launcher_foreground"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyMusicApp">
+        <receiver
+            android:name=".presentation.widget.MyWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/my_widget_info" />
+        </receiver>
+
         <activity
             android:name=".presentation.activity.SelectSongActivity"
             android:exported="false" />

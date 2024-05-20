@@ -1,7 +1,6 @@
 package com.example.mymusicapp.presentation.viewmodel
 
 import androidx.annotation.MainThread
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -76,14 +75,18 @@ class MainViewModel : ViewModel() {
 
     fun loadPlayList() {
         CoroutineScope(Dispatchers.IO).launch {
-            val songList = playListRepository.getSongs()
-            val playList = playListRepository.getPlayLists()
+            val songListEntity = playListRepository.getSongs()
+            val playListEntity = playListRepository.getPlayLists()
             val playListHashMap = hashMapOf<Int, PlayList>()
-            playList.forEach {
+            playListEntity.forEach {
                 playListHashMap[it.id] = PlayList(it.name, mutableListOf())
             }
-            songList.forEach {
-                playListHashMap[it.playListId]?.contentUriList?.add(it.contentURI.toUri())
+            songListEntity.forEach {
+                playListHashMap[it.playListId]!!.songs.add(
+                    songList.find { song ->
+                        song.getContentUri().toString() == it.contentURI
+                    }!!
+                )
             }
             playListList.clear()
             playListHashMap.forEach {
@@ -95,19 +98,28 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    private val playListItemLiveData = MutableLiveData<PlayList>()
-    fun observePlayListItem(): LiveData<PlayList> = playListItemLiveData
-    fun addPlayList(name: String) {
-        playListList.add(PlayList(name, mutableListOf()))
-        playListRepository.addPlayList(name)
-    }
-
     private val playListPositionLiveData = MutableLiveData<Int>()
-    fun observePlayListPosition() = playListPositionLiveData
-
-    fun setPlayListPosition(position: Int) {
+    fun observePlayList(): LiveData<Int> = playListPositionLiveData
+    fun setPlayList(position: Int) {
         playListPositionLiveData.postValue(position)
     }
 
-    fun getSongList(position: Int) = playListList[position]
+    fun addPlayList(name: String) {
+        playListRepository.addPlayList(name)
+    }
+
+    fun updateSongList(selectedPosition: MutableList<Int>) {
+        selectedPosition.sort()
+        val position = playListPositionLiveData.value!!
+        val playList = playListList[position]
+        playList.songs.clear()
+        selectedPosition.forEach {
+            playList.songs.add(songList[it])
+        }
+        playListPositionLiveData.postValue(position)
+        playListRepository.updatePlayList(playList)
+    }
+
+    fun getPlayList(position: Int): PlayList = playListList[position]
+
 }

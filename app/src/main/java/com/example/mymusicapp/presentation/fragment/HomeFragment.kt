@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.mymusicapp.callback.ItemListener
 import com.example.mymusicapp.databinding.FragmentHomeBinding
 import com.example.mymusicapp.presentation.activity.SongActivity
 import com.example.mymusicapp.presentation.adapter.SongAdapter
@@ -19,9 +20,11 @@ class HomeFragment : Fragment() {
     private val mainMVVM = MainViewModel.getInstance()
 
     private val songAdapter by lazy {
-        SongAdapter(requireContext()) { position ->
-            mainMVVM.getController().seekTo(position, 0)
-        }
+        SongAdapter(requireContext(), object : ItemListener {
+            override fun onItemClicked(position: Int) {
+                mainMVVM.getController().seekTo(position, 0)
+            }
+        })
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

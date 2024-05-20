@@ -13,7 +13,6 @@
 
 ## Technology
 • Architecture: MVVM Clean Architecture, LiveData, ViewBinding <br>
-• Architecture: MVVM Clean Architecture, LiveData, ViewBinding <br>
 • Service: Foreground Service and Bind Service <br>
 • Asynchronous programming: Coroutines <br>
 • Firebase Storage
