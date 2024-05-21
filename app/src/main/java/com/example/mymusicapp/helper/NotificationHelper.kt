@@ -15,7 +15,7 @@ object NotificationHelper {
 
     fun createNotificationChannel(): NotificationChannelCompat {
         return NotificationChannelCompat.Builder(
-            AppCommon.CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_MAX
+            AppCommon.CHANNEL_ID, NotificationManagerCompat.IMPORTANCE_LOW
         ).setName("Music").setDescription("Play music").build()
     }
 

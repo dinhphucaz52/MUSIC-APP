@@ -16,20 +16,12 @@ class SelectSongActivity : AppCompatActivity() {
         MainViewModel.getInstance()
     }
 
-    private val selectedPosition by lazy {
-        mutableListOf<Int>()
-    }
-
     private val adapter by lazy {
         SongPlayListAdapter(
             this@SelectSongActivity,
-            MainViewModel.getInstance().getSongList(),
             object : ItemListener {
                 override fun onItemClicked(position: Int) {
-                    if (position < 0)
-                        selectedPosition.remove(position)
-                    else
-                        selectedPosition.add(position)
+                    //TODO: Add song to playlist
                 }
             })
     }
@@ -38,12 +30,24 @@ class SelectSongActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         init()
         setEvents()
+        dataBinding()
+    }
+
+    private fun dataBinding() {
+        mainMVVM.observeSongsList().observe(this) { songList ->
+            val selectedSong = arrayListOf<Int>()
+            songList.forEachIndexed { index, song ->
+                if (mainMVVM.getPlayList().songs.find { it.getContentUri() == song.getContentUri() } != null)
+                    selectedSong.add(index)
+            }
+            adapter.updateData(songList, selectedSong)
+        }
     }
 
     private fun setEvents() {
         binding.apply {
             buttonBack.setOnClickListener {
-                mainMVVM.updateSongList(selectedPosition)
+                mainMVVM.updateSongList(adapter.getSelectedSong())
                 finish()
             }
             rvSelectSongList.apply {

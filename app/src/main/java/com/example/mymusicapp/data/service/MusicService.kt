@@ -20,6 +20,8 @@ class MusicService : MediaLibraryService() {
     private lateinit var player: ExoPlayer
     private lateinit var session: MediaLibrarySession
     private lateinit var notificationManager: NotificationManagerCompat
+    private var currentPlayList = AppCommon.INVALID_VALUE
+
     private val binder = MyBinder()
 
     inner class MyBinder : Binder() {
@@ -44,8 +46,6 @@ class MusicService : MediaLibraryService() {
 
         notificationManager = NotificationManagerCompat.from(this)
         notificationManager.createNotificationChannel(NotificationHelper.createNotificationChannel())
-
-
     }
 
     override fun onBind(intent: Intent?): IBinder {
@@ -66,9 +66,15 @@ class MusicService : MediaLibraryService() {
     fun getSession(): MediaLibrarySession = session
 
 
-    fun loadData(songList: ArrayList<SongFile>?) {
-        songList?.forEach {
-            if (it.getContentUri() != null) loadMediaItem(it.getContentUri()!!)
+    fun loadData(songList: ArrayList<SongFile>?, playListPosition: Int) {
+        if (playListPosition != currentPlayList) {
+            println("LoadData")
+            currentPlayList = playListPosition
+            player.stop()
+            player.clearMediaItems()
+            songList?.forEach {
+                if (it.getContentUri() != null) loadMediaItem(it.getContentUri()!!)
+            }
         }
     }
 

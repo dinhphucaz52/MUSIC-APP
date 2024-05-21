@@ -17,9 +17,6 @@ interface AppDAO {
     @Query("INSERT INTO play_lists(name) VALUES(:name)")
     fun addPlayList(name: String)
 
-    @Query("SELECT ID FROM play_lists WHERE name = :name")
-    fun getPlayListId(name: String): Int
-
     @Query("DELETE FROM songs WHERE play_list_id = :playListId")
     fun deleteSongsByPlayListId(playListId: Int)
 }

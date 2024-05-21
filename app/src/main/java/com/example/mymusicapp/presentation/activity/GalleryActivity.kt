@@ -22,11 +22,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class GalleryActivity : AppCompatActivity(), ItemListener {
+class GalleryActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGalleryBinding
     private lateinit var galleryRepository: GalleryRepository
-    private lateinit var imageAdapter: ImageAdapter
+    private val imageAdapter by lazy {
+        ImageAdapter(this@GalleryActivity, object : ItemListener {
+            override fun onItemClicked(position: Int) {
+                println("GalleryActivity.onItemClicked.dateTaken: $position")
+            }
+        })
+    }
     private val imageList = ArrayList<ImageFile>()
 
 
@@ -101,7 +107,6 @@ class GalleryActivity : AppCompatActivity(), ItemListener {
     }
 
     private fun prepareRecyclerView() {
-        imageAdapter = ImageAdapter(this@GalleryActivity, this)
         binding.recyclerViewGallery.apply {
             adapter = imageAdapter
             layoutManager =
@@ -115,9 +120,5 @@ class GalleryActivity : AppCompatActivity(), ItemListener {
                 galleryMVVM.uploadImages(imageList)
             }
         }
-    }
-
-    override fun onItemClicked(position: Int) {
-        println("GalleryActivity.onItemClicked.dateTaken: $position")
     }
 }

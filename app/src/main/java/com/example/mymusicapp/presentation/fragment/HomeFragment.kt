@@ -1,6 +1,7 @@
 package com.example.mymusicapp.presentation.fragment
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,8 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.mymusicapp.callback.ItemListener
+import com.example.mymusicapp.callback.SongItemListener
+import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.databinding.FragmentHomeBinding
 import com.example.mymusicapp.presentation.activity.SongActivity
 import com.example.mymusicapp.presentation.adapter.SongAdapter
@@ -20,8 +22,14 @@ class HomeFragment : Fragment() {
     private val mainMVVM = MainViewModel.getInstance()
 
     private val songAdapter by lazy {
-        SongAdapter(requireContext(), object : ItemListener {
-            override fun onItemClicked(position: Int) {
+        SongAdapter(requireContext(), object : SongItemListener {
+            override fun onItemClicked(uri: Uri) {
+                var position = AppCommon.INVALID_VALUE
+                for (i in mainMVVM.getSongList().indices)
+                    if (mainMVVM.getSongList()[i].getContentUri() == uri)
+                        position = i
+                println("HomeFragment.onItemClicked: $position")
+                mainMVVM.loadData(AppCommon.LOCAL_FILES)
                 mainMVVM.getController().seekTo(position, 0)
             }
         })
@@ -78,7 +86,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun dataBinding() {
-        mainMVVM.observeAudioFileList().observe(viewLifecycleOwner) {
+        mainMVVM.observeSongsList().observe(viewLifecycleOwner) {
             songAdapter.updateData(it)
         }
         mainMVVM.observeSongName().observe(viewLifecycleOwner) {

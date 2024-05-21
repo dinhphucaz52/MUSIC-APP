@@ -1,11 +1,13 @@
 package com.example.mymusicapp.presentation.fragment
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mymusicapp.callback.DialogListener
 import com.example.mymusicapp.callback.ItemListener
@@ -26,9 +28,8 @@ class PlayListFragment : Fragment() {
     }
 
     private val playListAdapter by lazy {
-        PlayListAdapter(requireContext(), object : ItemListener {
+        PlayListAdapter(requireContext(), @UnstableApi object : ItemListener {
             override fun onItemClicked(position: Int) {
-                println("PlayListFragment.onItemClicked: $position")
                 mainMVVM.setPlayList(position)
                 val intent = Intent(requireContext(), PlayListActivity::class.java)
                 startActivity(intent)

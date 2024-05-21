@@ -2,6 +2,6 @@ package com.example.mymusicapp.callback
 
 import android.net.Uri
 
-interface ItemListener {
-    fun onItemClicked(position: Int)
+interface SongItemListener {
+    fun onItemClicked(uri: Uri)
 }

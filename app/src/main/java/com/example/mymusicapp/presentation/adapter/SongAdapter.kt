@@ -6,15 +6,14 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.mymusicapp.callback.ItemListener
-import com.example.mymusicapp.data.model.PlayList
+import com.example.mymusicapp.callback.SongItemListener
 import com.example.mymusicapp.data.model.SongFile
 import com.example.mymusicapp.databinding.ItemMusicBinding
 
 
 class SongAdapter(
     private val context: Context,
-    private val listener: ItemListener
+    private val listener: SongItemListener
 ) : RecyclerView.Adapter<SongAdapter.ViewHolder>() {
 
     private var songList = ArrayList<SongFile>()
@@ -22,7 +21,8 @@ class SongAdapter(
     inner class ViewHolder(var binding: ItemMusicBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
-                listener.onItemClicked(bindingAdapterPosition)
+                songList[bindingAdapterPosition].getContentUri()
+                    ?.let { it1 -> listener.onItemClicked(it1) }
             }
         }
     }
@@ -51,5 +51,6 @@ class SongAdapter(
         this.songList = songList
         notifyDataSetChanged()
     }
+    fun getURI(position: Int) = songList[position].getContentUri()
 }
 

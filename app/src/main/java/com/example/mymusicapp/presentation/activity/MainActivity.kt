@@ -47,8 +47,8 @@ class MainActivity : AppCompatActivity() {
             myMusicService = binder.getService()
             isBound = true
 
-            mainMVVM.observeAudioFileList().observe(this@MainActivity) {
-                myMusicService?.loadData(it)
+            mainMVVM.observeSongsList().observe(this@MainActivity) {
+                myMusicService?.loadData(it, AppCommon.LOCAL_FILES)
             }
             val sessionToken = myMusicService!!.getSession().token
             controllerFuture = MediaController.Builder(this@MainActivity, sessionToken).buildAsync()
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == AppCommon.REQUEST_CODE_PERMISSION && permissions[0] == Manifest.permission.READ_MEDIA_AUDIO) {
-            mainMVVM.loadData()
+            mainMVVM.init()
         }
     }
 
@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
         mainRepository = MainRepository(this@MainActivity)
         mainMVVM.setRepository(mainRepository)
         if (checkSelfPermission(Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-            mainMVVM.loadData()
+            mainMVVM.init()
         } else {
             requestPermission()
         }

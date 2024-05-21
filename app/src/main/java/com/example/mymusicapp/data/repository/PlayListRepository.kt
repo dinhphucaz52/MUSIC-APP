@@ -35,10 +35,9 @@ class PlayListRepository(
 
     fun updatePlayList(playList: PlayList) {
         CoroutineScope(Dispatchers.IO).launch {
-            val playListId = appDAO.getPlayListId(playList.name)
-            appDAO.deleteSongsByPlayListId(playListId)
+            appDAO.deleteSongsByPlayListId(playList.id)
             playList.songs.forEach {
-                appDAO.addSong(it.getContentUri().toString(), playListId)
+                appDAO.addSong(it.getContentUri().toString(), playList.id)
             }
         }
     }

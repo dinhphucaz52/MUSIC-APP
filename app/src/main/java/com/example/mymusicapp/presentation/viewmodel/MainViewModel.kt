@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.media3.session.MediaController
+import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.model.PlayList
 import com.example.mymusicapp.data.model.SongFile
 import com.example.mymusicapp.data.repository.MainRepository
@@ -38,12 +39,21 @@ class MainViewModel : ViewModel() {
 
     private var songList = ArrayList<SongFile>()
     private val songListLiveData = MutableLiveData<ArrayList<SongFile>>()
-    fun observeAudioFileList(): LiveData<ArrayList<SongFile>> = songListLiveData
-    fun loadData() {
+    fun observeSongsList(): LiveData<ArrayList<SongFile>> = songListLiveData
+    fun init() {
         CoroutineScope(Dispatchers.IO).launch {
             songList = mainRepository.getAllAudioFiles()
             songListLiveData.postValue(songList)
         }
+    }
+
+    fun loadData(playListPosition: Int) {
+        val songListPrepareUpdate = if (playListPosition == AppCommon.LOCAL_FILES)
+            songList
+        else
+            playListList[playListPosition].songs as ArrayList<SongFile>
+        if (songListPrepareUpdate != songListLiveData.value)
+            songListLiveData.postValue(songListPrepareUpdate)
     }
     private lateinit var controller: MediaController
     fun setController(controller: MediaController) {
@@ -79,7 +89,7 @@ class MainViewModel : ViewModel() {
             val playListEntity = playListRepository.getPlayLists()
             val playListHashMap = hashMapOf<Int, PlayList>()
             playListEntity.forEach {
-                playListHashMap[it.id] = PlayList(it.name, mutableListOf())
+                playListHashMap[it.id] = PlayList(it.id, it.name, mutableListOf())
             }
             songListEntity.forEach {
                 playListHashMap[it.playListId]!!.songs.add(
@@ -121,5 +131,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun getPlayList(position: Int): PlayList = playListList[position]
+    fun getPlayList() = playListList[playListPositionLiveData.value!!]
+
 
 }
