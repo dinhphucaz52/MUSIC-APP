@@ -5,7 +5,6 @@ import com.example.mymusicapp.data.database.AppDatabase
 import com.example.mymusicapp.data.database.PlayListsEntity
 import com.example.mymusicapp.data.database.SongsEntity
 import com.example.mymusicapp.data.model.PlayList
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,9 +26,10 @@ class PlayListRepository(
         }
     }
 
-     fun addPlayList(name: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            appDAO.addPlayList(name)
+    suspend fun addPlayList(name: String): PlayList {
+        return withContext(Dispatchers.IO) {
+            val playListId = appDAO.addPlayList(name)
+            PlayList(playListId.toInt(), name, mutableListOf())
         }
     }
 
@@ -39,6 +39,18 @@ class PlayListRepository(
             playList.songs.forEach {
                 appDAO.addSong(it.getContentUri().toString(), playList.id)
             }
+        }
+    }
+    fun deletePlayList(playList: PlayList) {
+        CoroutineScope(Dispatchers.IO).launch {
+            appDAO.deleteSongsByPlayListId(playList.id)
+            appDAO.deletePlayList(playList.id)
+        }
+    }
+
+    fun deleteSongById(id: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            appDAO.deleteSongById(id)
         }
     }
 }

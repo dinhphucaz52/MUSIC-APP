@@ -1,14 +1,13 @@
 package com.example.mymusicapp.presentation.fragment
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.media3.common.util.UnstableApi
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.mymusicapp.callback.DialogListener
 import com.example.mymusicapp.callback.ItemListener
 import com.example.mymusicapp.data.repository.PlayListRepository
@@ -31,6 +30,7 @@ class PlayListFragment : Fragment() {
         PlayListAdapter(requireContext(), @UnstableApi object : ItemListener {
             override fun onItemClicked(position: Int) {
                 mainMVVM.setPlayList(position)
+                binding.dialogBottom.visibility = View.VISIBLE
                 val intent = Intent(requireContext(), PlayListActivity::class.java)
                 startActivity(intent)
             }
@@ -70,6 +70,9 @@ class PlayListFragment : Fragment() {
                     }
                 })
             }
+            buttonDelete.setOnClickListener {
+                mainMVVM.deletePlayList()
+            }
         }
     }
 
@@ -78,15 +81,25 @@ class PlayListFragment : Fragment() {
             observePlayListList().observe(viewLifecycleOwner) {
                 playListAdapter.updateData(it)
             }
+            observePlayList().observe(viewLifecycleOwner) {
+                val playList = mainMVVM.getPlayList()
+                if (playList != null) {
+                    binding.apply {
+                        textView5.text = playList.name
+                        textView6.text = playList.songs.size.toString()
+                    }
+                } else {
+                    binding.dialogBottom.visibility = View.GONE
+                }
+            }
         }
-
     }
 
     private fun prepareRecyclerView() {
         binding.rvPlayList.apply {
             adapter = playListAdapter
             layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
         }
     }
 

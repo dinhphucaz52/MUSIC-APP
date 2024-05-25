@@ -1,10 +1,14 @@
 package com.example.mymusicapp.data.service
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Binder
 import android.os.IBinder
 import androidx.core.app.NotificationManagerCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -21,6 +25,16 @@ class MusicService : MediaLibraryService() {
     private lateinit var session: MediaLibrarySession
     private lateinit var notificationManager: NotificationManagerCompat
     private var currentPlayList = AppCommon.INVALID_VALUE
+    private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            println("MusicService.broadcastReceiver.onReceive")
+            when (intent?.action) {
+                "PLAY" -> {
+                    println("MusicService.broadcastReceiver.onReceive: PLAY")
+                }
+            }
+        }
+    }
 
     private val binder = MyBinder()
 
@@ -29,10 +43,8 @@ class MusicService : MediaLibraryService() {
             return this@MusicService
         }
     }
-
-
-
     override fun onCreate() {
+        println("MusicService.onCreate")
         super.onCreate()
 
         player = ExoPlayer.Builder(this).build()
@@ -46,6 +58,10 @@ class MusicService : MediaLibraryService() {
 
         notificationManager = NotificationManagerCompat.from(this)
         notificationManager.createNotificationChannel(NotificationHelper.createNotificationChannel())
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(
+            broadcastReceiver, IntentFilter("PLAY")
+        )
     }
 
     override fun onBind(intent: Intent?): IBinder {
@@ -55,6 +71,7 @@ class MusicService : MediaLibraryService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
+        println("MusicService.onStartCommand: ")
         updateNotification()
         return START_NOT_STICKY
     }
@@ -89,5 +106,11 @@ class MusicService : MediaLibraryService() {
         )
     }
 
-
+    override fun onDestroy() {
+        super.onDestroy()
+        currentPlayList = AppCommon.INVALID_VALUE
+        player.clearMediaItems()
+        player.release()
+        session.release()
+    }
 }

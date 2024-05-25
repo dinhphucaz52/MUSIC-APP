@@ -31,14 +31,14 @@ class PlayListActivity : AppCompatActivity() {
         SongAdapter(this@PlayListActivity, object : SongItemListener {
             override fun onItemClicked(uri: Uri) {
                 var position = AppCommon.INVALID_VALUE
-                mainMVVM.getPlayList().songs.forEachIndexed { index, song ->
+                mainMVVM.getPlayList()?.songs?.forEachIndexed { index, song ->
                     if (song.getContentUri() == uri) {
                         position = index
                     }
                 }
                 mainMVVM.observePlayList().value?.let {
                     myMusicService?.loadData(
-                        mainMVVM.getPlayList().songs as ArrayList<SongFile>,
+                        mainMVVM.getPlayList()?.songs as ArrayList<SongFile>,
                         it
                     )
                 }

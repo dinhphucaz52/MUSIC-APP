@@ -69,6 +69,14 @@ class MainActivity : AppCompatActivity() {
     private val mainMVVM = MainViewModel.getInstance()
     private lateinit var mainRepository: MainRepository
 
+    companion object {
+        init {
+            System.loadLibrary("mymusicapp")
+        }
+    }
+
+    private external fun stringFromJNI(): String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         init()
@@ -142,5 +150,10 @@ class MainActivity : AppCompatActivity() {
                 ), AppCommon.REQUEST_CODE_PERMISSION
             )
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(serviceConnection)
     }
 }

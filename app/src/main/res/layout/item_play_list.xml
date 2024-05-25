@@ -20,17 +20,33 @@
 
     <TextView
         android:id="@+id/text_playlist_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:maxLines="1"
         android:text="PLAY LIST TITLE"
-        android:textAlignment="center"
         android:textColor="@color/text_primary_color"
-        android:textSize="40sp"
+        android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/imageView2"
         app:layout_constraintStart_toStartOf="@+id/imageView2"
         app:layout_constraintTop_toBottomOf="@+id/imageView2"
         tools:ignore="HardcodedText" />
+
+
+    <TextView
+        android:id="@+id/text_view_songs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="3 songs"
+        android:textAlignment="center"
+        android:textColor="@color/text_primary_color"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/text_playlist_title"
+        app:layout_constraintTop_toBottomOf="@+id/text_playlist_title"
+        tools:ignore="HardcodedText" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

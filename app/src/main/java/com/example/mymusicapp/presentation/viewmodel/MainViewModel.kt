@@ -92,30 +92,35 @@ class MainViewModel : ViewModel() {
                 playListHashMap[it.id] = PlayList(it.id, it.name, mutableListOf())
             }
             songListEntity.forEach {
-                playListHashMap[it.playListId]!!.songs.add(
-                    songList.find { song ->
-                        song.getContentUri().toString() == it.contentURI
-                    }!!
-                )
+                songList.forEach { songFile ->
+                    if (songFile.getContentUri().toString() == it.contentURI) {
+                        playListHashMap[it.playListId]!!.songs.add(songFile)
+                    }
+//                    else {
+//                        playListRepository.deleteSongById(it.id)
+//                    }
+                }
             }
             playListList.clear()
             playListHashMap.forEach {
                 playListList.add(it.value)
             }
-            CoroutineScope(Dispatchers.Main).launch {
-                playListListLiveData.postValue(playListList)
-            }
+            playListListLiveData.postValue(playListList)
         }
     }
 
-    private val playListPositionLiveData = MutableLiveData<Int>()
+    private val playListPositionLiveData = MutableLiveData(AppCommon.INVALID_VALUE)
     fun observePlayList(): LiveData<Int> = playListPositionLiveData
     fun setPlayList(position: Int) {
         playListPositionLiveData.postValue(position)
     }
 
     fun addPlayList(name: String) {
-        playListRepository.addPlayList(name)
+        CoroutineScope(Dispatchers.IO).launch {
+            val playList = playListRepository.addPlayList(name)
+            playListList.add(playList)
+            playListListLiveData.postValue(playListList)
+        }
     }
 
     fun updateSongList(selectedPosition: MutableList<Int>) {
@@ -126,12 +131,25 @@ class MainViewModel : ViewModel() {
         selectedPosition.forEach {
             playList.songs.add(songList[it])
         }
+        playListListLiveData.postValue(playListList)
         playListPositionLiveData.postValue(position)
         playListRepository.updatePlayList(playList)
     }
 
     fun getPlayList(position: Int): PlayList = playListList[position]
-    fun getPlayList() = playListList[playListPositionLiveData.value!!]
+    fun getPlayList(): PlayList? {
+        if (playListPositionLiveData.value == AppCommon.INVALID_VALUE)
+            return null
+        return playListList[playListPositionLiveData.value!!]
+    }
 
-
+    fun deletePlayList() {
+        val playList = playListList[playListPositionLiveData.value!!]
+        CoroutineScope(Dispatchers.IO).launch {
+            playListRepository.deletePlayList(playList)
+            playListList.remove(playList)
+            playListPositionLiveData.postValue(AppCommon.INVALID_VALUE)
+            playListListLiveData.postValue(playListList)
+        }
+    }
 }
