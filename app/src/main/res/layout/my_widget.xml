@@ -1,11 +1,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary_color"
     android:orientation="vertical"
     android:theme="@style/Theme.MyMusicApp.AppWidgetContainer">
 
+
     <TextView
+        android:id="@+id/text_view_song_name"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -23,34 +26,44 @@
         android:weightSum="5">
 
         <ImageView
+            android:id="@+id/widget_button_shuffle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/shuffle" />
+            android:src="@drawable/shuffle"
+            tools:ignore="ContentDescription,NestedWeights" />
 
         <ImageView
+            android:id="@+id/widget_button_prev"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/skip_back" />
+            android:src="@drawable/skip_back"
+            tools:ignore="ContentDescription" />
 
         <ImageView
+            android:id="@+id/widget_button_play"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/play" />
+            android:src="@drawable/play"
+            tools:ignore="ContentDescription" />
 
         <ImageView
+            android:id="@+id/widget_button_next"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/skip_fwd" />
+            android:src="@drawable/skip_fwd"
+            tools:ignore="ContentDescription" />
 
         <ImageView
+            android:id="@+id/widget_button_fav"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/favourite" />
+            android:src="@drawable/favourite"
+            tools:ignore="ContentDescription" />
 
     </LinearLayout>
 

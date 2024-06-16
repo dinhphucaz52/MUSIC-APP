@@ -10,4 +10,10 @@
     <color name="light_blue_200">#FF81D4FA</color>
     <color name="light_blue_600">#FF039BE5</color>
     <color name="light_blue_900">#FF01579B</color>
+
+
+
+    <color name="green_200">#bef4dc</color>
+    <color name="green_400">#98dabf</color>
+    <color name="green_900">#1c6053</color>
 </resources>

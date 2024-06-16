@@ -19,9 +19,11 @@ import androidx.media3.session.MediaController
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.bumptech.glide.Glide
 import com.example.mymusicapp.R
 import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.repository.MainRepository
+import com.example.mymusicapp.data.repository.UserRepository
 import com.example.mymusicapp.data.service.MusicService
 import com.example.mymusicapp.databinding.ActivityMainBinding
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
@@ -36,8 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var controllerFuture: ListenableFuture<MediaController>
     private lateinit var controller: MediaController
-
-
+    private lateinit var mainRepository: MainRepository
     private var isBound = false
     private var myMusicService: MusicService? = null
     private val serviceConnection = object : ServiceConnection {
@@ -61,13 +62,12 @@ class MainActivity : AppCompatActivity() {
                 MoreExecutors.directExecutor()
             )
         }
+
         override fun onServiceDisconnected(name: ComponentName?) {
             isBound = false
         }
     }
-
     private val mainMVVM = MainViewModel.getInstance()
-    private lateinit var mainRepository: MainRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,17 +100,26 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         enableEdgeToEdge()
 
+        //Init NavController
         navController =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment)!!.findNavController()
         binding.bottomNav.setupWithNavController(navController)
 
         mainRepository = MainRepository(this@MainActivity)
         mainMVVM.setRepository(mainRepository)
+
+        //Request Permission
         if (checkSelfPermission(Manifest.permission.READ_MEDIA_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             mainMVVM.init()
         } else {
             requestPermission()
         }
+
+        //Load user photo
+        Glide.with(this)
+            .load(UserRepository.photoURL)
+            .circleCrop()
+            .into(binding.userButton)
     }
 
     private fun initController() {
@@ -142,5 +151,10 @@ class MainActivity : AppCompatActivity() {
                 ), AppCommon.REQUEST_CODE_PERMISSION
             )
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(serviceConnection)
     }
 }

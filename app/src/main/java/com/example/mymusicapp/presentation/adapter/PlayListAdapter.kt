@@ -18,8 +18,10 @@ class PlayListAdapter(
     inner class ViewHolder(val binding: ItemPlayListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.root.setOnClickListener {
-                listener.onItemClicked(position = bindingAdapterPosition)
+            binding.root.apply {
+                setOnClickListener {
+                    listener.onItemClicked(position = bindingAdapterPosition)
+                }
             }
         }
     }
@@ -36,15 +38,12 @@ class PlayListAdapter(
 
     override fun getItemCount(): Int = playListList.size
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.apply {
             textPlaylistTitle.text = playListList[position].name
+            textViewSongs.text = "${playListList[position].songs.size} songs"
         }
-    }
-
-    fun addPlayList(playList: PlayList) {
-        this.playListList.add(playList)
-        notifyItemInserted(this.playListList.size - 1)
     }
 
     @SuppressLint("NotifyDataSetChanged")

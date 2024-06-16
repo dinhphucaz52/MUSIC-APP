@@ -12,4 +12,18 @@ object AppCommon {
     //Hashing
     const val BASE: Long = 331
     const val MOD: Long = 1000000007
+
+    //WIDGET
+    const val WIDGET_REQUEST_CODE = 404
+    const val WIDGET_ACTION = "WIDGET_ACTION"
+    const val WIDGET_PLAY_PREV = "WIDGET_PLAY_PREVIOUS"
+    const val WIDGET_PLAY_NEXT = "WIDGET_PLAY_NEXT"
+    const val WIDGET_PLAY = "WIDGET_PLAY"
+
+
+    const val SHARED_PREF_NAME = "UserPreferences"
+    const val SHARED_PREF_EMAIL = "email"
+    const val SHARED_PREF_DISPLAY_NAME = "displayName"
+    const val SHARED_PREF_PHOTO_URL = "photoUrl"
+    const val SHARED_PREF_UID = "uid"
 }

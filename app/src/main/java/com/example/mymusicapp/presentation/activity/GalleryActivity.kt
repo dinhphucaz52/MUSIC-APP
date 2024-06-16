@@ -7,9 +7,11 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
 import com.example.mymusicapp.callback.ItemListener
 import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.model.ImageFile
@@ -29,7 +31,14 @@ class GalleryActivity : AppCompatActivity() {
     private val imageAdapter by lazy {
         ImageAdapter(this@GalleryActivity, object : ItemListener {
             override fun onItemClicked(position: Int) {
-                println("GalleryActivity.onItemClicked.dateTaken: $position")
+                binding.apply {
+                    containerImageView.visibility = View.VISIBLE
+                    if (!isDestroyed) {
+                        Glide.with(this@GalleryActivity)
+                            .load(imageList[position].uri)
+                            .into(imageViewPreview)
+                    }
+                }
             }
         })
     }

@@ -5,11 +5,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.media3.session.MediaController
+import com.example.mymusicapp.callback.LoadDataListener
 import com.example.mymusicapp.common.AppCommon
 import com.example.mymusicapp.data.model.PlayList
 import com.example.mymusicapp.data.model.SongFile
 import com.example.mymusicapp.data.repository.MainRepository
 import com.example.mymusicapp.data.repository.PlayListRepository
+import com.example.mymusicapp.data.repository.UserRepository
 import com.example.mymusicapp.helper.StringHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,9 +24,11 @@ class MainViewModel : ViewModel() {
     fun setRepository(mainRepository: MainRepository) {
         this.mainRepository = mainRepository
     }
+
     fun setPlayListRepository(playListRepository: PlayListRepository) {
         this.playListRepository = playListRepository
     }
+
     companion object {
         private lateinit var instance: MainViewModel
 
@@ -55,10 +59,12 @@ class MainViewModel : ViewModel() {
         if (songListPrepareUpdate != songListLiveData.value)
             songListLiveData.postValue(songListPrepareUpdate)
     }
+
     private lateinit var controller: MediaController
     fun setController(controller: MediaController) {
         this.controller = controller
     }
+
     fun getController() = controller
     fun filterSongs(newText: String) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -72,6 +78,7 @@ class MainViewModel : ViewModel() {
             songListLiveData.postValue(filteredList)
         }
     }
+
     private val songNameLiveData = MutableLiveData("NO SONG FOUND")
     fun observeSongName(): LiveData<String> = songNameLiveData
     fun setSongName(songName: String) {
@@ -79,7 +86,7 @@ class MainViewModel : ViewModel() {
     }
 
     //PlayList
-    private val playListList = ArrayList<PlayList>()
+    private var playListList = ArrayList<PlayList>()
     private val playListListLiveData = MutableLiveData<ArrayList<PlayList>>()
     fun observePlayListList(): LiveData<ArrayList<PlayList>> = playListListLiveData
 
@@ -92,30 +99,35 @@ class MainViewModel : ViewModel() {
                 playListHashMap[it.id] = PlayList(it.id, it.name, mutableListOf())
             }
             songListEntity.forEach {
-                playListHashMap[it.playListId]!!.songs.add(
-                    songList.find { song ->
-                        song.getContentUri().toString() == it.contentURI
-                    }!!
-                )
+                songList.forEach { songFile ->
+                    if (songFile.getContentUri().toString() == it.contentURI) {
+                        playListHashMap[it.playListId]!!.songs.add(songFile)
+                    }
+//                    else {
+//                        playListRepository.deleteSongById(it.id)
+//                    }
+                }
             }
             playListList.clear()
             playListHashMap.forEach {
                 playListList.add(it.value)
             }
-            CoroutineScope(Dispatchers.Main).launch {
-                playListListLiveData.postValue(playListList)
-            }
+            playListListLiveData.postValue(playListList)
         }
     }
 
-    private val playListPositionLiveData = MutableLiveData<Int>()
+    private val playListPositionLiveData = MutableLiveData(AppCommon.INVALID_VALUE)
     fun observePlayList(): LiveData<Int> = playListPositionLiveData
     fun setPlayList(position: Int) {
         playListPositionLiveData.postValue(position)
     }
 
     fun addPlayList(name: String) {
-        playListRepository.addPlayList(name)
+        CoroutineScope(Dispatchers.IO).launch {
+            val playList = playListRepository.addPlayList(name)
+            playListList.add(playList)
+            playListListLiveData.postValue(playListList)
+        }
     }
 
     fun updateSongList(selectedPosition: MutableList<Int>) {
@@ -126,12 +138,43 @@ class MainViewModel : ViewModel() {
         selectedPosition.forEach {
             playList.songs.add(songList[it])
         }
+        playListListLiveData.postValue(playListList)
         playListPositionLiveData.postValue(position)
         playListRepository.updatePlayList(playList)
     }
 
     fun getPlayList(position: Int): PlayList = playListList[position]
-    fun getPlayList() = playListList[playListPositionLiveData.value!!]
+    fun getPlayList(): PlayList? {
+        if (playListPositionLiveData.value == AppCommon.INVALID_VALUE)
+            return null
+        return playListList[playListPositionLiveData.value!!]
+    }
 
+    fun deletePlayList() {
+        val playList = playListList[playListPositionLiveData.value!!]
+        CoroutineScope(Dispatchers.IO).launch {
+            playListRepository.deletePlayList(playList)
+            playListList.remove(playList)
+            playListPositionLiveData.postValue(AppCommon.INVALID_VALUE)
+            playListListLiveData.postValue(playListList)
+        }
+    }
 
+    fun uploadPlayList() {
+        val currentPlayList = playListList[playListPositionLiveData.value!!]
+        playListRepository.uploadPlayList(currentPlayList)
+    }
+
+    fun loadPlayListFromFirebase() {
+        val uid = UserRepository.userUID ?: return
+        CoroutineScope(Dispatchers.IO).launch {
+            playListRepository.loadPlayListFromFirebase(uid, object : LoadDataListener {
+                override fun onSuccess(data: ArrayList<PlayList>) {
+                    playListList.clear()
+                    playListList.addAll(data)
+                    playListListLiveData.postValue(playListList)
+                }
+            })
+        }
+    }
 }

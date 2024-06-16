@@ -37,7 +37,7 @@ class SelectSongActivity : AppCompatActivity() {
         mainMVVM.observeSongsList().observe(this) { songList ->
             val selectedSong = arrayListOf<Int>()
             songList.forEachIndexed { index, song ->
-                if (mainMVVM.getPlayList().songs.find { it.getContentUri() == song.getContentUri() } != null)
+                if (mainMVVM.getPlayList()?.songs?.find { it.getContentUri() == song.getContentUri() } != null)
                     selectedSong.add(index)
             }
             adapter.updateData(songList, selectedSong)
