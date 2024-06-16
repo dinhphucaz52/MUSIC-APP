@@ -21,5 +21,9 @@ object AppCommon {
     const val WIDGET_PLAY = "WIDGET_PLAY"
 
 
-
+    const val SHARED_PREF_NAME = "UserPreferences"
+    const val SHARED_PREF_EMAIL = "email"
+    const val SHARED_PREF_DISPLAY_NAME = "displayName"
+    const val SHARED_PREF_PHOTO_URL = "photoUrl"
+    const val SHARED_PREF_UID = "uid"
 }

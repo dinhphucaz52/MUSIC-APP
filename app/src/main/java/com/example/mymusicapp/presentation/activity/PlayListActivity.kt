@@ -101,6 +101,9 @@ class PlayListActivity : AppCompatActivity() {
             buttonHome.setOnClickListener {
                 startActivity(Intent(this@PlayListActivity, SongActivity::class.java))
             }
+            fabUpload.setOnClickListener {
+                mainMVVM.uploadPlayList()
+            }
         }
     }
 
