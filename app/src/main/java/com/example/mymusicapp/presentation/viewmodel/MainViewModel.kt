@@ -19,6 +19,23 @@ import kotlinx.coroutines.launch
 
 
 class MainViewModel : ViewModel() {
+
+    companion object {
+        @Volatile
+        private var instance: MainViewModel? = null
+
+        @MainThread
+        fun getInstance(): MainViewModel {
+            return instance ?: synchronized(this) {
+                instance ?: MainViewModel().also { instance = it }
+            }
+        }
+        @MainThread
+        fun clearInstance() {
+            instance = null
+        }
+    }
+
     private lateinit var mainRepository: MainRepository
     private lateinit var playListRepository: PlayListRepository
     fun setRepository(mainRepository: MainRepository) {
@@ -27,16 +44,6 @@ class MainViewModel : ViewModel() {
 
     fun setPlayListRepository(playListRepository: PlayListRepository) {
         this.playListRepository = playListRepository
-    }
-
-    companion object {
-        private lateinit var instance: MainViewModel
-
-        @MainThread
-        fun getInstance(): MainViewModel {
-            instance = if (::instance.isInitialized) instance else MainViewModel()
-            return instance
-        }
     }
 
     fun getSongList() = songList

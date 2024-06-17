@@ -11,4 +11,11 @@ object UserRepository {
         this.photoURL = photoURL
         this.userUID = uid
     }
+
+    fun clearData() {
+        this.email = null
+        this.name = null
+        this.photoURL = null
+        this.userUID = null
+    }
 }

@@ -9,16 +9,16 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.view.MenuItem
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.mymusicapp.R
 import com.example.mymusicapp.common.AppCommon
@@ -26,7 +26,11 @@ import com.example.mymusicapp.data.repository.MainRepository
 import com.example.mymusicapp.data.repository.UserRepository
 import com.example.mymusicapp.data.service.MusicService
 import com.example.mymusicapp.databinding.ActivityMainBinding
+import com.example.mymusicapp.presentation.adapter.ViewPagerAdapter
+import com.example.mymusicapp.presentation.fragment.HomeFragment
+import com.example.mymusicapp.presentation.fragment.PlayListFragment
 import com.example.mymusicapp.presentation.viewmodel.MainViewModel
+import com.google.android.material.navigation.NavigationBarView.OnItemSelectedListener
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 
@@ -35,10 +39,10 @@ import com.google.common.util.concurrent.MoreExecutors
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navController: NavController
     private lateinit var controllerFuture: ListenableFuture<MediaController>
     private lateinit var controller: MediaController
     private lateinit var mainRepository: MainRepository
+    private val listOfFragment = ArrayList<Fragment>()
     private var isBound = false
     private var myMusicService: MusicService? = null
     private val serviceConnection = object : ServiceConnection {
@@ -100,11 +104,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         enableEdgeToEdge()
 
-        //Init NavController
-        navController =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment)!!.findNavController()
-        binding.bottomNav.setupWithNavController(navController)
-
         mainRepository = MainRepository(this@MainActivity)
         mainMVVM.setRepository(mainRepository)
 
@@ -115,11 +114,48 @@ class MainActivity : AppCompatActivity() {
             requestPermission()
         }
 
+        initViewPager()
+
         //Load user photo
         Glide.with(this)
             .load(UserRepository.photoURL)
             .circleCrop()
             .into(binding.userButton)
+
+    }
+
+    private fun initViewPager() {
+        listOfFragment.add(HomeFragment())
+        listOfFragment.add(PlayListFragment())
+        binding.viewPager.apply {
+            adapter = ViewPagerAdapter(this@MainActivity, listOfFragment)
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    when (position) {
+                        0 -> {
+                            binding.bottomNav.selectedItemId = R.id.homeFragment
+                        }
+
+                        1 -> {
+                            binding.bottomNav.selectedItemId = R.id.playListFragment
+                        }
+                    }
+                    super.onPageSelected(position)
+                }
+            })
+        }
+        binding.bottomNav.setOnItemSelectedListener(OnItemSelectedListener {
+            when (it.itemId) {
+                R.id.homeFragment -> {
+                    binding.viewPager.currentItem = 0
+                }
+
+                R.id.playListFragment -> {
+                    binding.viewPager.currentItem = 1
+                }
+            }
+            true
+        })
     }
 
     private fun initController() {
@@ -156,5 +192,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unbindService(serviceConnection)
+        MainViewModel.clearInstance()
     }
 }

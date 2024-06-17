@@ -14,11 +14,19 @@ class GalleryViewModel : ViewModel() {
     }
 
     companion object {
-        private lateinit var instance: GalleryViewModel
+        @Volatile
+        private var instance: GalleryViewModel? = null
+
         @MainThread
         fun getInstance(): GalleryViewModel {
-            instance = if (::instance.isInitialized) instance else GalleryViewModel()
-            return instance
+            return instance ?: synchronized(this) {
+                instance ?: GalleryViewModel().also { instance = it }
+            }
+        }
+
+        @MainThread
+        fun clearInstance() {
+            instance = null
         }
     }
 

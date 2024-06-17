@@ -56,6 +56,12 @@ class GalleryActivity : AppCompatActivity() {
         requestPermission()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        imageList.clear()
+        GalleryViewModel.clearInstance()
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

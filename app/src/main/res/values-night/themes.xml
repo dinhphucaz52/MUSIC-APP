@@ -1,5 +1,5 @@
 <resources>
-    <style name="Base.Theme.MyMusicApp" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Base.Theme.MyMusicApp" parent="Theme.MaterialComponents.NoActionBar">
     </style>
 
     <style name="Theme.MyMusicApp" parent="Base.Theme.MyMusicApp" />

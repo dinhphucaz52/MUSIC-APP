@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="35dp"
     android:background="@color/primary_color"
+    android:paddingTop="35dp"
     tools:context=".presentation.activity.MainActivity">
 
 
@@ -20,23 +20,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView3"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_button"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="10dp"
-        app:cardCornerRadius="100dp"
+        android:src="@drawable/user"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/user_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:importantForAccessibility="no"
-            android:src="@drawable/user" />
-    </androidx.cardview.widget.CardView>
-
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/app_name"
@@ -48,44 +39,40 @@
         android:textColor="@color/text_primary_color"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/cardView3"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/linear_layout"
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="15dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nav"
+        android:layout_marginVertical="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/cardView4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/app_name"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/app_name" />
 
-        <fragment
-            android:id="@+id/nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph" />
-
-    </LinearLayout>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nav"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:translationZ="10dp"
+        app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:background="@color/primary_color"
-        app:itemRippleColor="@android:color/transparent"
-        app:itemTextColor="@drawable/bottom_navigation_item_color"
-        app:labelVisibilityMode="unlabeled"
-        app:itemIconTint="@drawable/bottom_navigation_item_color"
-        app:menu="@menu/bottom_nav" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary_color"
+            app:itemIconTint="@color/color_item_bottom_nav"
+            app:itemTextColor="@color/color_item_bottom_nav"
+            app:menu="@menu/bottom_nav" />
+    </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
