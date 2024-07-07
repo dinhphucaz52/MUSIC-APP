@@ -31,9 +31,11 @@ class HomeFragment : Fragment() {
                 println("HomeFragment.onItemClicked: $position")
                 mainMVVM.loadData(AppCommon.LOCAL_FILES)
                 mainMVVM.getController().seekTo(position, 0)
+                mainMVVM.getController().play()
             }
         })
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,6 +75,7 @@ class HomeFragment : Fragment() {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         return true
                     }
+
                     override fun onQueryTextChange(newText: String?): Boolean {
                         mainMVVM.filterSongs(newText ?: "")
                         return true

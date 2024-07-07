@@ -76,6 +76,11 @@ class MainActivity : AppCompatActivity() {
         setEvents()
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        myMusicService?.loadData(mainMVVM.getSongList(), AppCommon.LOCAL_FILES)
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

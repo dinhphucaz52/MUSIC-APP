@@ -43,6 +43,7 @@ class MusicService : MediaLibraryService() {
             return this@MusicService
         }
     }
+
     override fun onCreate() {
         println("MusicService.onCreate")
         super.onCreate()
@@ -71,7 +72,7 @@ class MusicService : MediaLibraryService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        println("MusicService.onStartCommand: ")
+        println("MusicService.onStartCommand: ${player.mediaItemCount}")
         updateNotification()
         return START_NOT_STICKY
     }
@@ -84,7 +85,7 @@ class MusicService : MediaLibraryService() {
 
 
     fun loadData(songList: ArrayList<SongFile>?, playListPosition: Int) {
-        if (playListPosition != currentPlayList) {
+        if (playListPosition != currentPlayList && player.mediaItemCount == 0) {
             println("LoadData")
             currentPlayList = playListPosition
             player.stop()

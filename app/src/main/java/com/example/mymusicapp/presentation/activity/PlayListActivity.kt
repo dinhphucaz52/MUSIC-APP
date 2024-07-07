@@ -44,6 +44,7 @@ class PlayListActivity : AppCompatActivity() {
                 }
                 if (position != AppCommon.INVALID_VALUE) {
                     controller.seekTo(position, 0)
+                    controller.play()
                 }
             }
         })
